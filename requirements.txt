@@ -1,0 +1,6 @@
+numpy
+matplotlib
+scipy
+pytest
+pytest-cov
+seaborn
