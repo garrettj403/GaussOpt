@@ -1,16 +1,5 @@
 """Analyze quasi-optical systems using Gaussian beam analysis.
 
-Quasi-optical analysis is important whenever the wavelength is comparable to
-the size of the optical components (making diffraction very important but not 
-dominant). Gaussian beam analysis of quasi-optical systems assumes that the 
-transverse amplitude profile (the E- or H-field) of the beam is similar to a 
-Gaussian function. This is roughly true for beams originating from waveguide 
-horn antennas.
-
-This module uses the matrix approach to Gaussian beam transformations. I used
-"Quasioptical Systems" by P. Goldsmith as a reference. I reference some of the
-equations from this book in my comments.
-
 """
 
 from __future__ import division, absolute_import, print_function
@@ -57,3 +46,7 @@ _ratio = 4./3.
 _longaxis = 7.
 _shortaxis = _longaxis / _ratio
 mpl.rc("figure", figsize=(_longaxis, _shortaxis))
+
+__author__ = "John Garrett"
+__email__ = "garrettj403@gmail.com"
+__version__ = "0.1"
