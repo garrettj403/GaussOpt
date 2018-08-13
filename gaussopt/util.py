@@ -1,3 +1,8 @@
+"""
+General utilities.
+
+"""
+
 import scipy.constants as sc
 import component
 import frequency

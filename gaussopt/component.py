@@ -1,3 +1,7 @@
+""" Classes for optical components.
+
+"""
+
 from __future__ import division
 import numpy as np
 import scipy.constants as sc
@@ -73,9 +77,6 @@ class Component(object):
                              comment='Composite System')
 
         return new_comp
-
-    # def __rmul__(self, next_comp):
-    #     return np.dot(self.matrix, next_comp.matrix)
 
 
 # Propagation classes ---------------------------------------------------------

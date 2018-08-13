@@ -1,3 +1,8 @@
+"""
+Build optical system and analyze.
+
+"""
+
 from __future__ import division
 import numpy as np 
 import util 
@@ -143,8 +148,12 @@ class System(object):
         ax.plot(f, self.coupling() * 100.)
         ax.set(xlim=[f.min(), f.max()])
         ax.set(xlabel='Frequency ({0})'.format(self.f.units))
-        ax.set(ylabel='Coupling (%)')
-        plt.show()
+        ax.set(ylabel='Coupling (\%)')
+        plt.autoscale(enable=True, axis='y', tight=True)
+        plt.grid(True)
+        plt.minorticks_on()
+        if ax is None:
+            plt.show()
 
     def plot_coupling_mag(self, ax=None):
         """
@@ -160,7 +169,8 @@ class System(object):
         ax.set(xlim=[f.min(), f.max()])
         ax.set(xlabel='Frequency ({0})'.format(self.f.units))
         ax.set(ylabel='Coupling (1)')
-        plt.show()
+        if ax is None:
+            plt.show()
 
     def plot_coupling_db(self, ax=None):
         """
@@ -176,7 +186,8 @@ class System(object):
         ax.set(xlim=[f.min(), f.max()])
         ax.set(xlabel='Frequency ({0})'.format(self.f.units))
         ax.set(ylabel='Coupling (dB)')
-        plt.show()
+        if ax is None:
+            plt.show()
 
     def plot_edge_taper_db(self, ax=None):
 
@@ -197,7 +208,8 @@ class System(object):
         ax.set(xlabel='Frequency ({0})'.format(self.f.units))
         ax.set(ylabel='Edge Taper (dB)')
         plt.tight_layout()
-        plt.show()
+        if ax is None:
+            plt.show()
 
     def plot_waists(self, ax=None):
 
@@ -216,8 +228,8 @@ class System(object):
         ax.set(xlim=[f.min(), f.max()])
         ax.set(xlabel='Frequency ({0})'.format(self.f.units))
         ax.set(ylabel='Beam Waist (mm)')
-        # plt.tight_layout()
-        plt.show()
+        if ax is None:
+            plt.show()
 
     def plot_aperture_30db(self, ax=None):
 
@@ -237,7 +249,8 @@ class System(object):
         ax.set(xlabel='Frequency ({0})'.format(self.f.units))
         ax.set(ylabel='Required Aperture Radius (mm)')
         plt.tight_layout()
-        plt.show()
+        if ax is None:
+            plt.show()
 
     def plot_system(self, freq=None, ax=None, figname=None):
 
@@ -272,8 +285,9 @@ class System(object):
             sys = np.dot(comp.matrix, sys)
         distance = np.array(distance)
         waist = np.array(waist)
-        ax.plot(distance*1e3, waist*1e3, label='Beam Waist')
-        ax.plot(distance*1e3, waist*np.sqrt(30/8.686)*1e3, 'r--', lw=1.5, label='Aperture Radius Required\n for 30dB Edge Taper')
+        ax.plot(distance*1e3, waist*1e3, label='Beam waist')
+        ax.plot(distance*1e3, waist*np.sqrt(30/8.686)*1e3, 'r--',
+                label='Aperture radius required\n'+ r'for $<$30 dB edge taper')
 
         # Add component radii and positions
         distance = self._comp_list[0].distance
@@ -285,28 +299,32 @@ class System(object):
                 q = transform_beam(sys.matrix, self._horn_tx.q)
                 w = _waist_from_q(q, self.f.w)
 
-                ax.plot(distance * 1e3, comp.radius * 1e3, 'kX', markersize=7)
-                label = "{0}\nradius".format(comp.comment)
-                ax.text(distance * 1e3, comp.radius * 1e3 + 5, label,
+                ax.axvline(distance * 1e3, ls=':', lw=0.5, c='k')
+
+                ax.plot(distance * 1e3, comp.radius * 1e3, 'kx', lw=1, markersize=3)
+                label = "A.R.".format(comp.comment)
+                ax.text(distance * 1e3, comp.radius * 1e3 + 4, label,
                         rotation=90, ha='center', va='bottom',
                         multialignment='left',
                         bbox=dict(boxstyle='round', facecolor='wheat',
-                                  alpha=0.5),
-                        fontsize=12)
+                                  alpha=1),
+                        fontsize=8)
 
-                ax.plot(distance * 1e3, w[idx] * 1e3, 'ko', markersize=7)
                 label = "{0}".format(comp.comment)
-                ax.text(distance * 1e3, w[idx] * 1e3 - 5, label,
-                        rotation=90, ha='center', va='top',
+                ax.text(distance * 1e3, w[idx] * 1e3 + 10, label,
+                        rotation=90, ha='center', va='bottom',
                         multialignment='left',
                         bbox=dict(boxstyle='round', facecolor='wheat',
-                                  alpha=0.5),
-                        fontsize=12)
+                                  alpha=1),
+                        fontsize=8)
 
         ax.set(ylim=[0, 100], ylabel='Size (mm)')
-        ax.set(xlim=[0, distance.max()*1e3], xlabel='Distance from Tx Horn Aperture (mm)')
+        plt.autoscale(enable=True, axis='x', tight=True)
+        ax.set(xlabel='Distance from Horn Aperture (mm)')
+        ax.minorticks_on()
 
-        ax.legend(loc=8, fontsize=12)
+        leg = ax.legend(loc=8, fontsize=8)
+        leg.get_frame().set_alpha(1.)
 
         if figname is not None:
             plt.savefig(figname, bbox_inches='tight')
@@ -364,9 +382,7 @@ def _coupling(qin, horn_rx, wavelength):
 
     Args:
         qin (complex): Input beam parameter
-        slen (float): Slant length (in mm)
-        arad (float): Aperture radius (in mm)
-        hf (float): Horn factor
+        horn_rx: Receiving horn
         wavelength (ndarray/float): Wavelength
 
     Returns:

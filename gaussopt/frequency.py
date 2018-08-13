@@ -1,3 +1,8 @@
+"""
+Class for frequency sweep.
+
+"""
+
 from __future__ import division
 import numpy as np 
 import scipy.constants as sc
@@ -8,7 +13,7 @@ frequency_verbosity = True
 
 class Frequency(object):
     """
-    Frequency sweep.
+    Class for frequency sweep.
     
     Attributes
     ----------
@@ -96,19 +101,6 @@ class Frequency(object):
     def __eq__(self, other):
 
         return np.array_equal(self.f, other.f)
-
-    def wavelength(self):
-        """
-        Get wavelength.
-        
-        Returns
-        -------
-        float/ndarray 
-            wavelength in m 
-            
-        """
-
-        return self.w
 
     def idx(self, freq, units='GHz'):
         """
