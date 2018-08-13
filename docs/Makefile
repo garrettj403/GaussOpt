@@ -7,6 +7,7 @@ SPHINXBUILD   = sphinx-build
 SPHINXPROJ    = GaussOpt
 SOURCEDIR     = source
 BUILDDIR      = ../../GaussOpt-docs
+PDFBUILDDIR   = /tmp
 PDF           = ../GaussOpt-manual.pdf
 
 # Put it first so that "make" without argument is like "make help".
@@ -21,6 +22,9 @@ help:
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 latexpdf:
+	# $(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(PDFBUILDDIR)/latex
+	# make -C $(PDFBUILDDIR)/latex all-pdf
+	# cp $(PDFBUILDDIR)/latex/*.pdf $(PDF)
 	make latex
 	make -C $(BUILDDIR)/latex
 	cp $(BUILDDIR)/latex/GaussOpt.pdf $(PDF)
