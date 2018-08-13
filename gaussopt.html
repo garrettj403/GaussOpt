@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -85,7 +87,10 @@
           
             
             
-                <p class="caption"><span class="caption-text">Contents:</span></p>
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">gaussopt package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
@@ -167,6 +172,7 @@
 </div>
 <div class="section" id="module-gaussopt.component">
 <span id="gaussopt-component-module"></span><h2>gaussopt.component module<a class="headerlink" href="#module-gaussopt.component" title="Permalink to this headline">¶</a></h2>
+<p>Classes for optical components.</p>
 <dl class="class">
 <dt id="gaussopt.component.Component">
 <em class="property">class </em><code class="descclassname">gaussopt.component.</code><code class="descname">Component</code><span class="sig-paren">(</span><em>matrix=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#gaussopt.component.Component" title="Permalink to this definition">¶</a></dt>
@@ -415,11 +421,12 @@
 </div>
 <div class="section" id="module-gaussopt.frequency">
 <span id="gaussopt-frequency-module"></span><h2>gaussopt.frequency module<a class="headerlink" href="#module-gaussopt.frequency" title="Permalink to this headline">¶</a></h2>
+<p>Class for frequency sweep.</p>
 <dl class="class">
 <dt id="gaussopt.frequency.Frequency">
 <em class="property">class </em><code class="descclassname">gaussopt.frequency.</code><code class="descname">Frequency</code><span class="sig-paren">(</span><em>start=None</em>, <em>stop=None</em>, <em>npts=301</em>, <em>units='GHz'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#gaussopt.frequency.Frequency" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>Frequency sweep.</p>
+<p>Class for frequency sweep.</p>
 <dl class="attribute">
 <dt id="gaussopt.frequency.Frequency.f">
 <code class="descname">f</code><a class="headerlink" href="#gaussopt.frequency.Frequency.f" title="Permalink to this definition">¶</a></dt>
@@ -481,27 +488,12 @@ verbose and comment</li>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="gaussopt.frequency.Frequency.wavelength">
-<code class="descname">wavelength</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gaussopt.frequency.Frequency.wavelength" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get wavelength.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">wavelength in m</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float/ndarray</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </dd></dl>
 
 </div>
 <div class="section" id="module-gaussopt.system">
 <span id="gaussopt-system-module"></span><h2>gaussopt.system module<a class="headerlink" href="#module-gaussopt.system" title="Permalink to this headline">¶</a></h2>
+<p>Build optical system and analyze.</p>
 <dl class="class">
 <dt id="gaussopt.system.System">
 <em class="property">class </em><code class="descclassname">gaussopt.system.</code><code class="descname">System</code><span class="sig-paren">(</span><em>horn_tx</em>, <em>component_list</em>, <em>horn_rx=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#gaussopt.system.System" title="Permalink to this definition">¶</a></dt>
@@ -681,6 +673,7 @@ verbose and comment</li>
 </div>
 <div class="section" id="module-gaussopt.util">
 <span id="gaussopt-util-module"></span><h2>gaussopt.util module<a class="headerlink" href="#module-gaussopt.util" title="Permalink to this headline">¶</a></h2>
+<p>General utilities.</p>
 <dl class="function">
 <dt id="gaussopt.util.set_d_units">
 <code class="descclassname">gaussopt.util.</code><code class="descname">set_d_units</code><span class="sig-paren">(</span><em>units</em><span class="sig-paren">)</span><a class="headerlink" href="#gaussopt.util.set_d_units" title="Permalink to this definition">¶</a></dt>

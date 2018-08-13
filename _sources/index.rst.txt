@@ -28,8 +28,9 @@ Quasi-optical analysis is important whenever the wavelength is comparable to the
    :maxdepth: 3
    :caption: Contents:
 
-   gaussopt
    gaussopt_example
+   gaussopt
+
 
 
 
