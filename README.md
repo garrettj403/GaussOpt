@@ -1,4 +1,5 @@
 GaussOpt
+========
 
 *Analyze quasi-optical systems using Gaussian beam analysis*
 
