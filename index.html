@@ -1,14 +1,14 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="Python" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="Python" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Welcome to GaussOpt’s documentation! &mdash; GaussOpt 0.1.dev1 documentation</title>
+  <title>Welcome to GaussOpt&#39;s documentation! &mdash; GaussOpt 0.1.dev1 documentation</title>
   
 
   
@@ -24,26 +24,18 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="GaussOpt 0.1.dev1 documentation" href="#"/>
-        <link rel="next" title="Gaussopt Example" href="gaussopt_example.html"/> 
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting Started" href="setup.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -91,8 +83,8 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gaussopt_example.html">Gaussopt Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="gaussopt.html">gaussopt package</a></li>
 </ul>
 
             
@@ -104,7 +96,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="#">GaussOpt</a>
@@ -112,9 +104,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -137,7 +130,7 @@
     
       <li><a href="#">Docs</a> &raquo;</li>
         
-      <li>Welcome to GaussOpt&#8217;s documentation!</li>
+      <li>Welcome to GaussOpt's documentation!</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -156,36 +149,45 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="welcome-to-gaussopt-s-documentation">
-<h1>Welcome to GaussOpt&#8217;s documentation!<a class="headerlink" href="#welcome-to-gaussopt-s-documentation" title="Permalink to this headline">¶</a></h1>
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="welcome-to-gaussopt-s-documentation">
+<h1>Welcome to GaussOpt's documentation!<a class="headerlink" href="#welcome-to-gaussopt-s-documentation" title="Permalink to this headline">¶</a></h1>
 <p><em>Analyze quasi-optical systems using Gaussian beam analysis</em></p>
 <p>Quasi-optical analysis is important whenever the wavelength is comparable to the size of the optical components. Gaussian beam analysis of quasi-optical systems assumes that the transverse amplitude profile (the E- or H-field) of the beam is similar to a Gaussian function. This is roughly true for beams originating from waveguide horn antennas.</p>
 <p><strong>Author:</strong> John Garrett (<a class="reference external" href="mailto:garrettj403&#37;&#52;&#48;gmail&#46;com">garrettj403<span>&#64;</span>gmail<span>&#46;</span>com</a>)</p>
 <p><strong>License:</strong> MIT</p>
 <p><strong>Language:</strong> Python 2.7</p>
-<p><strong>Version:</strong> 0.1</p>
-<p><strong>Release:</strong> 0.1.dev1</p>
 <p><strong>On PyPi:</strong> <a class="reference external" href="https://pypi.python.org/pypi/GaussOpt">https://pypi.python.org/pypi/GaussOpt</a></p>
 <p><strong>On GitHub:</strong> <a class="reference external" href="https://github.com/garrettj403/GaussOpt/">https://github.com/garrettj403/GaussOpt/</a></p>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gaussopt_example.html">Gaussopt Example</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="gaussopt_example.html#define-frequency-sweep">Define frequency sweep</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gaussopt_example.html#define-horns">Define horns</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gaussopt_example.html#define-optical-components">Define optical components</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gaussopt_example.html#build-optical-system">Build Optical System</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gaussopt_example.html#plot-coupling">Plot Coupling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gaussopt_example.html#plot-beam-propagation">Plot Beam Propagation</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="gaussopt.html">gaussopt package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="gaussopt.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gaussopt.html#module-gaussopt.component">gaussopt.component module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gaussopt.html#module-gaussopt.frequency">gaussopt.frequency module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gaussopt.html#module-gaussopt.system">gaussopt.system module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gaussopt.html#module-gaussopt.util">gaussopt.util module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gaussopt.html#module-gaussopt">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gaussopt_example.html#Define-frequency-sweep">Define frequency sweep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gaussopt_example.html#Define-horns">Define horns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gaussopt_example.html#Define-optical-components">Define optical components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gaussopt_example.html#Build-Optical-System">Build Optical System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gaussopt_example.html#Plot-Coupling">Plot Coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gaussopt_example.html#Plot-Beam-Propagation">Plot Beam Propagation</a></li>
 </ul>
 </li>
 </ul>
@@ -202,15 +204,13 @@
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="gaussopt_example.html" class="btn btn-neutral float-right" title="Gaussopt Example" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="setup.html" class="btn btn-neutral float-right" title="Getting Started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>
@@ -220,11 +220,11 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, John Garrett.
+        &copy; Copyright 2017, John Garrett
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -239,36 +239,24 @@
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'0.1.dev1',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
 
   
 
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>
