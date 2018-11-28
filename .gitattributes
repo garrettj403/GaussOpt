@@ -1,4 +1,5 @@
 *.py linguist-language=Python
 *.ipynb linguist-documentation
 gaussopt_example.ipynb linguist-documentation
+Makefile linguist-documentation
 docs/* linguist-documentation
