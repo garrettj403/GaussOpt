@@ -342,12 +342,10 @@ div.nboutput div.output_area.stderr {
 </style>
 <div class="section" id="Gaussopt-Example">
 <h1>Gaussopt Example<a class="headerlink" href="#Gaussopt-Example" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li>This example will walk through the basics of setting up a Gaussian
-telescope.</li>
-<li>Note: All distances are in mm and all frequencies are in GHz unless
-specified otherwise.</li>
-</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">GaussOpt</span></code> package can be used to analyze quasioptical systems
+using Gaussian beam analysis.</p>
+<p>This simple example will walk through the basics of setting up a
+Gaussian beam telescope.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [1]:
@@ -363,24 +361,19 @@ specified otherwise.</li>
 </pre></div>
 </div>
 </div>
-<ul class="simple">
-<li>Gaussian telescopes use two mirrors to couple energy between two horn
-antennas. If the mirrors have focal lengths <span class="math notranslate nohighlight">\(f\)</span>, then the
-mirrors should be separated by <span class="math notranslate nohighlight">\(2f\)</span> and the distance between
-each horn’s beam waist and it’s respective mirror should be
-<span class="math notranslate nohighlight">\(f\)</span>.</li>
-</ul>
-<div class="figure" id="id1">
-<img alt="title" src="_images/GaussianBeamTelescope.jpg" />
-<p class="caption"><span class="caption-text">title</span></p>
+<p><strong>Gaussian beam telescopes</strong> use two mirrors to couple energy between
+two horn antennas. If the mirrors have focal lengths <span class="math notranslate nohighlight">\(f\)</span>, then the
+mirrors should be separated by <span class="math notranslate nohighlight">\(2\,f\)</span> and the distance between
+each horn’s beam waist and its respective mirror should be <span class="math notranslate nohighlight">\(f\)</span>.</p>
+<div class="figure">
+<img alt="" src="_images/GaussianBeamTelescope.jpg" />
 </div>
 <div class="section" id="Define-frequency-sweep">
 <h2>Define frequency sweep<a class="headerlink" href="#Define-frequency-sweep" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>The standard way to initialize this class is to define the start and
-end frequency.</li>
-<li>This class assumes GHz unless a unit is provided.</li>
-</ul>
+<p>Here we will define a frequency sweep from 150 GHz to 300 GHz using the
+<code class="docutils literal notranslate"><span class="pre">gaussopt.Frequency</span></code> class.</p>
+<p>Note that this class assumes units of GHz unless a different unit is
+provided.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [2]:
@@ -404,10 +397,12 @@ Frequency sweep:
 </div>
 <div class="section" id="Define-horns">
 <h2>Define horns<a class="headerlink" href="#Define-horns" title="Permalink to this headline">¶</a></h2>
-<p>Horns are defined by their slant length, aperture radius and horn
-factor. See &quot;Quasioptical Systems&quot; by Paul Goldsmith for more
-information.</p>
-<div class="figure" id="id2">
+<p>As seen in the figure below, horn antennas are defined by their slant
+length, aperture radius and horn factor. See &quot;Quasioptical Systems&quot; by
+Paul Goldsmith for more information. We will use the <code class="docutils literal notranslate"><span class="pre">gaussopt.Horn</span></code>
+class to generate the transmitting horn (<code class="docutils literal notranslate"><span class="pre">horn_tx</span></code>) and then copy this
+horn to generate the receiving horn (<code class="docutils literal notranslate"><span class="pre">horn_rx</span></code>).</p>
+<div class="figure" id="id1">
 <img alt="title" src="_images/Horn.jpg" />
 <p class="caption"><span class="caption-text">title</span></p>
 </div>
@@ -420,6 +415,7 @@ information.</p>
 <span></span><span class="n">slen</span> <span class="o">=</span> <span class="mf">22.64</span>  <span class="c1"># slant length (in mm)</span>
 <span class="n">arad</span> <span class="o">=</span> <span class="mf">3.6</span>    <span class="c1"># aperture radius (in mm)</span>
 <span class="n">hfac</span> <span class="o">=</span> <span class="mf">0.59</span>   <span class="c1"># horn factor</span>
+
 <span class="n">horn_tx</span> <span class="o">=</span> <span class="n">Horn</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">slen</span><span class="p">,</span> <span class="n">arad</span><span class="p">,</span> <span class="n">hfac</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;Trasmitting&#39;</span><span class="p">)</span>
 <span class="n">horn_rx</span> <span class="o">=</span> <span class="n">horn_tx</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">comment</span><span class="o">=</span><span class="s1">&#39;Receiving&#39;</span><span class="p">)</span>
 </pre></div>
@@ -445,10 +441,10 @@ Horn: Receiving
 </div>
 <div class="section" id="Define-optical-components">
 <h2>Define optical components<a class="headerlink" href="#Define-optical-components" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>We need to define the mirrors and the freespace between the mirrors.</li>
-<li>These classes will assume mm unless a unit is provided.</li>
-</ul>
+<p>Now it is time to build the rest of the circuit, i.e., everything
+between the transmitting and receiving horns. We can define empty space
+using the <code class="docutils literal notranslate"><span class="pre">gaussopt.Freespace</span></code> class and mirrors using the
+<code class="docutils literal notranslate"><span class="pre">gaussopt.Mirror</span></code> class.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [4]:
@@ -477,11 +473,8 @@ Mirror: M2
 
 </pre></div></div>
 </div>
-<ul class="simple">
-<li>Note that the distance between the horn and the mirror needs to be
-reduced because the actual beam waist will be behind the horn
-aperture.</li>
-</ul>
+<p>Note that the distance between a horn and a mirror needs to be reduced
+because the actual beam waist will be behind the horn aperture.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [5]:
@@ -506,6 +499,12 @@ Freespace: reduced
 </div>
 <div class="section" id="Build-Optical-System">
 <h2>Build Optical System<a class="headerlink" href="#Build-Optical-System" title="Permalink to this headline">¶</a></h2>
+<p>We can now combine all of the individual optical components to build our
+optical system. This is normally done by creating a list of optical
+components (<code class="docutils literal notranslate"><span class="pre">component_list</span></code> below), starting from the transmitting
+horn and then listing each component to the receiving horn.</p>
+<p>The component list is then passed to the <code class="docutils literal notranslate"><span class="pre">gaussopt.System</span></code> class,
+along with the two horns, to calculate the system properties.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [6]:
@@ -514,7 +513,7 @@ Freespace: reduced
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">component_list</span> <span class="o">=</span> <span class="p">(</span><span class="n">d_red</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">d_red</span><span class="p">)</span>
 
-<span class="n">system</span> <span class="o">=</span> <span class="n">System</span><span class="p">(</span><span class="n">horn_tx</span><span class="p">,</span> <span class="n">component_list</span><span class="p">,</span> <span class="n">horn_rx</span><span class="p">)</span>
+<span class="n">system</span> <span class="o">=</span> <span class="n">System</span><span class="p">(</span><span class="n">horn_rx</span><span class="p">,</span> <span class="n">component_list</span><span class="p">,</span> <span class="n">horn_tx</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -531,6 +530,9 @@ System:
 </div>
 <div class="section" id="Plot-Coupling">
 <h2>Plot Coupling<a class="headerlink" href="#Plot-Coupling" title="Permalink to this headline">¶</a></h2>
+<p>The coupling between the two horns can be plotted using the
+<code class="docutils literal notranslate"><span class="pre">plot_coupling</span></code> method. There should be perfect coupling at the center
+frequency.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [7]:
@@ -560,6 +562,10 @@ Best coupling: 100.0 % at 230.0 GHz
 </div>
 <div class="section" id="Plot-Beam-Propagation">
 <h2>Plot Beam Propagation<a class="headerlink" href="#Plot-Beam-Propagation" title="Permalink to this headline">¶</a></h2>
+<p>The beam waist can be plotted through the entire chain using the
+<code class="docutils literal notranslate"><span class="pre">plot_system</span></code> command. This method will also plot the aperture of each
+component to ensure that there isn’t too much edge taper anywhere in the
+system.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [8]:

@@ -6,8 +6,9 @@
    "source": [
     "# Gaussopt Example\n",
     "\n",
-    "- This example will walk through the basics of setting up a Gaussian telescope.\n",
-    "- Note: All distances are in mm and all frequencies are in GHz unless specified otherwise."
+    "The ``GaussOpt`` package can be used to analyze quasioptical systems using Gaussian beam analysis. \n",
+    "\n",
+    "This simple example will walk through the basics of setting up a Gaussian beam telescope."
    ]
   },
   {
@@ -28,9 +29,9 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "- Gaussian telescopes use two mirrors to couple energy between two horn antennas. If the mirrors have focal lengths $f$, then the mirrors should be separated by $2f$ and the distance between each horn's beam waist and it's respective mirror should be $f$.\n",
+    "**Gaussian beam telescopes** use two mirrors to couple energy between two horn antennas. If the mirrors have focal lengths $f$, then the mirrors should be separated by $2\\,f$ and the distance between each horn's beam waist and its respective mirror should be $f$.\n",
     "\n",
-    "![title](misc/GaussianBeamTelescope.jpg)"
+    "![](misc/GaussianBeamTelescope.jpg)"
    ]
   },
   {
@@ -39,8 +40,9 @@
    "source": [
     "## Define frequency sweep\n",
     "\n",
-    "- The standard way to initialize this class is to define the start and end frequency. \n",
-    "- This class assumes GHz unless a unit is provided."
+    "Here we will define a frequency sweep from 150 GHz to 300 GHz using the ``gaussopt.Frequency`` class. \n",
+    "\n",
+    "Note that this class assumes units of GHz unless a different unit is provided."
    ]
   },
   {
@@ -68,7 +70,7 @@
    "source": [
     "## Define horns\n",
     "\n",
-    "Horns are defined by their slant length, aperture radius and horn factor. See \"Quasioptical Systems\" by Paul Goldsmith for more information.\n",
+    "As seen in the figure below, horn antennas are defined by their slant length, aperture radius and horn factor. See \"Quasioptical Systems\" by Paul Goldsmith for more information. We will use the ``gaussopt.Horn`` class to generate the transmitting horn (``horn_tx``) and then copy this horn to generate the receiving horn (``horn_rx``).\n",
     "\n",
     "![title](misc/Horn.jpg)"
    ]
@@ -99,6 +101,7 @@
     "slen = 22.64  # slant length (in mm)\n",
     "arad = 3.6    # aperture radius (in mm)\n",
     "hfac = 0.59   # horn factor\n",
+    "\n",
     "horn_tx = Horn(freq, slen, arad, hfac, comment='Trasmitting')\n",
     "horn_rx = horn_tx.copy(comment='Receiving')"
    ]
@@ -109,8 +112,7 @@
    "source": [
     "## Define optical components\n",
     "\n",
-    "- We need to define the mirrors and the freespace between the mirrors.\n",
-    "- These classes will assume mm unless a unit is provided."
+    "Now it is time to build the rest of the circuit, i.e., everything between the transmitting and receiving horns. We can define empty space using the ``gaussopt.Freespace`` class and mirrors using the ``gaussopt.Mirror`` class."
    ]
   },
   {
@@ -144,7 +146,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "- Note that the distance between the horn and the mirror needs to be reduced because the actual beam waist will be behind the horn aperture."
+    "Note that the distance between a horn and a mirror needs to be reduced because the actual beam waist will be behind the horn aperture."
    ]
   },
   {
@@ -171,7 +173,11 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## Build Optical System"
+    "## Build Optical System\n",
+    "\n",
+    "We can now combine all of the individual optical components to build our optical system. This is normally done by creating a list of optical components (``component_list`` below), starting from the transmitting horn and then listing each component to the receiving horn.\n",
+    "\n",
+    "The component list is then passed to the ``gaussopt.System`` class, along with the two horns, to calculate the system properties."
    ]
   },
   {
@@ -192,14 +198,16 @@
    "source": [
     "component_list = (d_red, m1, d, d, m2, d_red)\n",
     "\n",
-    "system = System(horn_tx, component_list, horn_rx)"
+    "system = System(horn_rx, component_list, horn_tx)"
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## Plot Coupling"
+    "## Plot Coupling\n",
+    "\n",
+    "The coupling between the two horns can be plotted using the ``plot_coupling`` method. There should be perfect coupling at the center frequency."
    ]
   },
   {
@@ -234,7 +242,9 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## Plot Beam Propagation"
+    "## Plot Beam Propagation\n",
+    "\n",
+    "The beam waist can be plotted through the entire chain using the ``plot_system`` command. This method will also plot the aperture of each component to ensure that there isn't too much edge taper anywhere in the system."
    ]
   },
   {
