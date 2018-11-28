@@ -14,7 +14,7 @@ Quasi-optical analysis is important whenever the wavelength is comparable to the
 
 **License:** MIT
 
-**Language:** Python 2.7
+**Language:** Python 3.7
 
 **On PyPi:** https://pypi.python.org/pypi/GaussOpt
 
