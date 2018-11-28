@@ -3,7 +3,7 @@ GaussOpt
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Maintainability](https://api.codeclimate.com/v1/badges/69ee4c8b4f91685158c4/maintainability)](https://codeclimate.com/github/garrettj403/GaussOpt/maintainability)
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/garrettj403/GaussOpt/issues)
 [![HitCount](http://hits.dwyl.io/garrettj403/GaussOpt.svg)](http://hits.dwyl.io/garrettj403/GaussOpt)
 
 *Analyze quasi-optical systems using Gaussian beam analysis*
