@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Gaussopt Example &mdash; GaussOpt 0.1.dev1 documentation</title>
+  <title>Gaussopt Example &mdash; GaussOpt 1.1.3 documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                0.1
+                1.1
               </div>
             
           
@@ -353,13 +353,12 @@ specified otherwise.</li>
 <span></span>In [1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Import the gaussopt package</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+
 <span class="kn">from</span> <span class="nn">gaussopt</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="c1"># Import modules for this notebook</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
 <span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">Image</span>
 </pre></div>
 </div>
@@ -387,8 +386,8 @@ end frequency.</li>
 <span></span>In [2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">freq</span> <span class="o">=</span> <span class="n">Frequency</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;rf sweep&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">freq</span> <span class="o">=</span> <span class="n">Frequency</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -397,7 +396,7 @@ end frequency.</li>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Frequency sweep: rf sweep
+Frequency sweep:
         f = 150.0 to 300.0 GHz, 301 pts
 
 </pre></div></div>
@@ -405,6 +404,9 @@ Frequency sweep: rf sweep
 </div>
 <div class="section" id="Define-horns">
 <h2>Define horns<a class="headerlink" href="#Define-horns" title="Permalink to this headline">¶</a></h2>
+<p>Horns are defined by their slant length, aperture radius and horn
+factor. See &quot;Quasioptical Systems&quot; by Paul Goldsmith for more
+information.</p>
 <div class="figure" id="id2">
 <img alt="title" src="_images/Horn.jpg" />
 <p class="caption"><span class="caption-text">title</span></p>
@@ -414,7 +416,7 @@ Frequency sweep: rf sweep
 <span></span>In [3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">slen</span> <span class="o">=</span> <span class="mf">22.64</span>  <span class="c1"># slant length (in mm)</span>
 <span class="n">arad</span> <span class="o">=</span> <span class="mf">3.6</span>    <span class="c1"># aperture radius (in mm)</span>
 <span class="n">hfac</span> <span class="o">=</span> <span class="mf">0.59</span>   <span class="c1"># horn factor</span>
@@ -444,6 +446,7 @@ Horn: Receiving
 <div class="section" id="Define-optical-components">
 <h2>Define optical components<a class="headerlink" href="#Define-optical-components" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
+<li>We need to define the mirrors and the freespace between the mirrors.</li>
 <li>These classes will assume mm unless a unit is provided.</li>
 </ul>
 <div class="nbinput docutils container">
@@ -451,7 +454,7 @@ Horn: Receiving
 <span></span>In [4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">d</span> <span class="o">=</span> <span class="n">Freespace</span><span class="p">(</span><span class="mi">160</span><span class="p">)</span>
 <span class="n">m1</span> <span class="o">=</span> <span class="n">Mirror</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;cm&#39;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;M1&#39;</span><span class="p">)</span>
 <span class="n">m2</span> <span class="o">=</span> <span class="n">Mirror</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;cm&#39;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;M2&#39;</span><span class="p">)</span>
@@ -484,7 +487,7 @@ aperture.</li>
 <span></span>In [5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">z_offset</span> <span class="o">=</span> <span class="n">horn_tx</span><span class="o">.</span><span class="n">z_offset</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;mm&#39;</span><span class="p">)[</span><span class="n">freq</span><span class="o">.</span><span class="n">idx</span><span class="p">(</span><span class="mi">230</span><span class="p">)]</span>
 <span class="n">d_red</span> <span class="o">=</span> <span class="n">Freespace</span><span class="p">(</span><span class="mi">160</span> <span class="o">-</span> <span class="n">z_offset</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;reduced&#39;</span><span class="p">)</span>
 </pre></div>
@@ -508,7 +511,7 @@ Freespace: reduced
 <span></span>In [6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">component_list</span> <span class="o">=</span> <span class="p">(</span><span class="n">d_red</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">d_red</span><span class="p">)</span>
 
 <span class="n">system</span> <span class="o">=</span> <span class="n">System</span><span class="p">(</span><span class="n">horn_tx</span><span class="p">,</span> <span class="n">component_list</span><span class="p">,</span> <span class="n">horn_rx</span><span class="p">)</span>
@@ -533,7 +536,7 @@ System:
 <span></span>In [7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">system</span><span class="o">.</span><span class="n">plot_coupling</span><span class="p">()</span>
 <span class="n">system</span><span class="o">.</span><span class="n">print_best_coupling</span><span class="p">()</span>
 </pre></div>
@@ -562,7 +565,7 @@ Best coupling: 100.0 % at 230.0 GHz
 <span></span>In [8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
 <span class="n">system</span><span class="o">.</span><span class="n">plot_system</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 </pre></div>
@@ -573,16 +576,6 @@ Best coupling: 100.0 % at 230.0 GHz
 </div>
 <div class="output_area docutils container">
 <img alt="_images/gaussopt_example_16_0.png" src="_images/gaussopt_example_16_0.png" />
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython2 notranslate"><div class="highlight"><pre>
-<span></span>
-</pre></div>
 </div>
 </div>
 </div>
@@ -627,11 +620,21 @@ Best coupling: 100.0 % at 230.0 GHz
 
     
     
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'1.1.3',
+              LANGUAGE:'Python',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
         <script type="text/javascript" src="_static/jquery.js"></script>
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
 
   
