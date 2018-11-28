@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='GaussOpt',
-      version='0.1.dev2',
+      version='1.1.3',
       description='Gaussian beam analysis',
       keywords='gaussian optics millimeter terahertz thz',
       packages=['gaussopt',],
@@ -11,5 +11,5 @@ setup(name='GaussOpt',
       author_email='garrettj403@gmail.com',
       license='MIT',
       url='https://github.com/garrettj403/GaussOpt/',
-      long_description=open('README.md').read(),
+      long_description=open('README').read(),
      )

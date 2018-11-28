@@ -3,10 +3,10 @@ Class for frequency sweep.
 
 """
 
-from __future__ import division
+
 import numpy as np 
 import scipy.constants as sc
-import util
+from . import util
 
 frequency_verbosity = True
 
@@ -74,7 +74,7 @@ class Frequency(object):
         self.idx_center = npts // 2
 
         if verbose:
-            print(self.__str__())
+            print((self.__str__()))
 
     def __str__(self):
 

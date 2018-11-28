@@ -3,9 +3,9 @@ Build optical system and analyze.
 
 """
 
-from __future__ import division
+
 import numpy as np 
-import util 
+from . import util 
 import matplotlib.pyplot as plt
 
 system_verbosity = True
@@ -70,7 +70,7 @@ class System(object):
         self.rout = _radius_from_q(self._horn_tx.q)
 
         if self._verbose:
-            print(self.__str__())
+            print((self.__str__()))
 
     def __str__(self):
 
@@ -133,7 +133,7 @@ class System(object):
         f_best = self.best_coupling_frequency() / mult
 
         s = "Best coupling: {0:.1f} % at {1:.1f} {2}"
-        print(s.format(best, f_best, units))
+        print((s.format(best, f_best, units)))
 
     def plot_coupling(self, ax=None):
         """

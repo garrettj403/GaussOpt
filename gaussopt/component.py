@@ -2,13 +2,13 @@
 
 """
 
-from __future__ import division
+
 import numpy as np
 import scipy.constants as sc
 import matplotlib.pyplot as plt
 from copy import deepcopy as copy
-from system import transform_beam
-import util
+from .system import transform_beam
+from . import util
 
 component_verbosity = True
 
@@ -116,7 +116,7 @@ class Freespace(Component):
         self.matrix = np.matrix([[1., self.distance], [0., 1.]])
 
         if self._verbose:
-            print(self.__str__())
+            print((self.__str__()))
 
     def __str__(self):
 
@@ -165,7 +165,7 @@ class Dielectric(Component):
         self.matrix = np.matrix([[1., self.distance * n], [0., 1.]])
 
         if self._verbose:
-            print(self.__str__())
+            print((self.__str__()))
 
     def __str__(self):
 
@@ -213,7 +213,7 @@ class Mirror(Component):
         self.matrix = np.matrix([[1., 0.], [-1. / self._focal_length, 1.]])
 
         if self._verbose:
-            print(self.__str__())
+            print((self.__str__()))
 
     def __str__(self):
 
@@ -325,7 +325,7 @@ class Horn(object):
         self.q, self.w, self.z = _horn(slen, arad, hf, freq.w)
 
         if self._verbose:
-            print(self.__str__())
+            print((self.__str__()))
 
     def __str__(self):
 
@@ -403,7 +403,7 @@ class Horn(object):
         tmp.comment = kwargs.get('comment', '')
         tmp._verbose = kwargs.get('verbose', component_verbosity)
         if tmp._verbose:
-            print(tmp.__str__())
+            print((tmp.__str__()))
 
         return tmp
 

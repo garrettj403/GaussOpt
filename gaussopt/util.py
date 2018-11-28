@@ -4,9 +4,9 @@ General utilities.
 """
 
 import scipy.constants as sc
-import component
-import frequency
-import system
+from . import component
+from . import frequency
+from . import system
 
 
 def set_d_units(units):
