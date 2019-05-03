@@ -73,7 +73,7 @@ class Component(object):
 
         # Set default values
         self.d = 0.  # distance
-        self._type = 'comp'  # component type
+        self.type = 'comp'  # component type
 
     def __str__(self):
 
@@ -149,7 +149,7 @@ class Freespace(Component):
         Component.__init__(self, **kwargs)
 
         # Private attributes
-        self._type = 'prop'
+        self.type = 'prop'
 
         # Freespace propagation distance
         self.d = distance * self._mult
@@ -214,7 +214,7 @@ class Dielectric(Component):
         Component.__init__(self, **kwargs)
 
         # Private attributes
-        self._type = 'prop'
+        self.type = 'prop'
 
         # Thickness of dielectric slab
         self.d = thickness * self._mult
@@ -282,7 +282,7 @@ class Mirror(Component):
         Component.__init__(self, **kwargs)
 
         # Private attributes
-        self._type = 'obj'
+        self.type = 'obj'
         
         # Focal length of mirror
         self.f = focal_length * self._mult
@@ -339,7 +339,7 @@ class Window(Component):
         # Initialize component
         Component.__init__(self, **kwargs)
 
-        self._type = 'obj'
+        self.type = 'obj'
     
     def __str__(self):
 
@@ -411,7 +411,7 @@ class Horn(object):
         """
 
         # Private attributes
-        self._type = 'horn'
+        self.type = 'horn'
         self._units = kwargs.get('units', 'mm')
         self._verbose = kwargs.get('verbose', True)
         self._mult = gaussopt.util.set_d_units(self._units)

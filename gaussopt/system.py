@@ -140,7 +140,7 @@ class System(object):
         
         """
 
-        f = self.freq.f / self.freq.mult
+        f = self.freq.f / self.freq.unit_mult
 
         if ax is None:
             fig, ax = plt.subplots()
@@ -160,7 +160,7 @@ class System(object):
 
         """
 
-        f = self.freq.f / self.freq.mult
+        f = self.freq.f / self.freq.unit_mult
 
         if ax is None:
             fig, ax = plt.subplots()
@@ -177,7 +177,7 @@ class System(object):
 
         """
 
-        f = self.freq.f / self.freq.mult
+        f = self.freq.f / self.freq.unit_mult
 
         if ax is None:
             fig, ax = plt.subplots()
@@ -190,7 +190,7 @@ class System(object):
 
     def plot_edge_taper_db(self, ax=None):
 
-        f = self.freq.f / self.freq.mult
+        f = self.freq.f / self.freq.unit_mult
 
         if ax is None:
             fig, ax = plt.subplots()
@@ -212,7 +212,7 @@ class System(object):
 
     def plot_waists(self, ax=None):
 
-        f = self.freq.f / self.freq.mult
+        f = self.freq.f / self.freq.unit_mult
 
         if ax is None:
             fig, ax = plt.subplots()
@@ -232,7 +232,7 @@ class System(object):
 
     def plot_aperture_30db(self, ax=None):
 
-        f = self.freq.f / self.freq.mult
+        f = self.freq.f / self.freq.unit_mult
 
         if ax is None:
             fig, ax = plt.subplots()
@@ -272,7 +272,7 @@ class System(object):
         sys = np.matrix([[1., 0], [0., 1.]])
         for comp in self._comp_list:
             if comp.type == 'prop':
-                d_tmp = np.arange(comp.distance, step=1e-3)
+                d_tmp = np.arange(comp.d, step=1e-3)
                 for d in d_tmp:
                     m_tmp = _freespace_matrix(d)
                     s_tmp = np.dot(m_tmp, sys)
@@ -280,7 +280,7 @@ class System(object):
                     w = _waist_from_q(q, wlen)
                     waist.append(w[idx])
                     distance.append(d + d_last_comp)
-            d_last_comp += comp.distance
+            d_last_comp += comp.d
             sys = np.dot(comp.matrix, sys)
         distance = np.array(distance)
         waist = np.array(waist)
@@ -289,11 +289,11 @@ class System(object):
                 label='Aperture radius\n' + r'for $<$30 dB edge taper')
 
         # Add component radii and positions
-        distance = self._comp_list[0].distance
+        distance = self._comp_list[0].d
         sys = self._comp_list[0]
         for comp in self._comp_list[1:]:
             sys *= comp
-            distance += comp.distance
+            distance += comp.d
             if comp.type == 'obj':
                 q = transform_beam(sys.matrix, self._horn_tx.q)
                 w = _waist_from_q(q, self.freq.w)

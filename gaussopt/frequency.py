@@ -55,8 +55,8 @@ class Frequency(object):
         verbose = kwargs.pop('verbose', True)
 
         self.comment = kwargs.pop('comment', None)
-        self._units = units
-        self._mult = gaussopt.util.set_f_units(units)
+        self.units = units
+        self.unit_mult = gaussopt.util.set_f_units(units)
 
         if single is not None:
             start = single
@@ -69,7 +69,7 @@ class Frequency(object):
             start = 200
             stop = 300
         
-        self.f = np.linspace(start, stop, npts) * self._mult
+        self.f = np.linspace(start, stop, npts) * self.unit_mult
         self.w = sc.c / self.f
         self.idx_center = npts // 2
 
@@ -78,15 +78,15 @@ class Frequency(object):
 
     def __str__(self):
 
-        start = self.f[0] / self._mult
-        stop = self.f[-1] / self._mult
+        start = self.f[0] / self.unit_mult
+        stop = self.f[-1] / self.unit_mult
         npts = np.alen(self.f)
         if self.comment is None:
             s = "Frequency sweep:\n\tf = {0:.1f} to {1:.1f} {2}, {3} pts\n"
-            s = s.format(start, stop, self._units, npts)
+            s = s.format(start, stop, self.units, npts)
         else:
             s = "Frequency sweep: {0}\n\tf = {1:.1f} to {2:.1f} {3}, {4} pts\n"
-            s = s.format(self.comment, start, stop, self._units, npts)
+            s = s.format(self.comment, start, stop, self.units, npts)
 
         return s
 
