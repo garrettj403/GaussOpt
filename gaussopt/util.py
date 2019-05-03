@@ -1,12 +1,9 @@
-"""
-General utilities.
+""" General utilities.
 
 """
+
 
 import scipy.constants as sc
-from . import component
-from . import frequency
-from . import system
 
 
 def set_d_units(units):
@@ -16,7 +13,7 @@ def set_d_units(units):
     Parameters
     ----------
     units : str 
-        distance units (e.g., 'mm', 'um', 'cm')
+        distance units: 'um', 'mm', 'cm', 'dm', 'm' or 'km'
 
     Returns
     -------
@@ -37,7 +34,7 @@ def set_d_units(units):
     try:
         mult = unit_dict[units.lower()]
     except:
-        raise ValueError("Units not recognized.")
+        raise ValueError("Distance units not recognized.")
 
     return mult
 
@@ -49,7 +46,7 @@ def set_f_units(units):
     Parameters
     ----------
     units : str 
-        frequency units (e.g., 'THz', 'GHz', 'MHz')
+        frequency units: 'Hz', 'kHz', 'MHz', 'GHz' or 'THz' 
 
     Returns
     -------
@@ -69,13 +66,6 @@ def set_f_units(units):
     try:
         mult = unit_dict[units.lower()]
     except:
-        raise ValueError("Units not recognized.")
+        raise ValueError("Frequency units not recognized.")
 
     return mult
-
-
-def set_verbosity(verbosity):
-
-    component.component_verbosity = verbosity
-    frequency.frequency_verbosity = verbosity
-    system.system_verbosity = verbosity

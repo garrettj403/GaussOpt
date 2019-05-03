@@ -1,19 +1,17 @@
-"""
-Build optical system and analyze.
+""" Optical system.
 
 """
 
 
-import numpy as np 
-from . import util 
 import matplotlib.pyplot as plt
+import numpy as np
 
-system_verbosity = True
+import gaussopt
 
 
 class System(object):
     """
-    Entire optical system.
+    Optical system.
     
     Attributes
     ----------
@@ -32,7 +30,7 @@ class System(object):
 
     def __init__(self, horn_tx, component_list, horn_rx=None, **kwargs):
         """
-        System constructor.
+        Build optical system.
         
         Parameters
         ----------
@@ -50,11 +48,12 @@ class System(object):
         if horn_rx is None:
             horn_rx = horn_tx.copy(comment='copy', verbose=False)
 
-        assert horn_rx.f == horn_tx.f, "Horn frequencies must match."
-        self.f = horn_rx.f
+        assert horn_rx.freq == horn_tx.freq, "Horn frequencies must match."
+
+        self.freq = horn_rx.freq
 
         self.comment = kwargs.get('comment', '')
-        self._verbose = kwargs.get('verbose', system_verbosity)
+        self._verbose = kwargs.get('verbose', True)
 
         self._horn_tx = horn_tx
         self._horn_rx = horn_rx
@@ -66,11 +65,11 @@ class System(object):
         self.matrix = self._system.matrix
 
         self.qout = transform_beam(self.matrix, self._horn_tx.q)
-        self.wout = _waist_from_q(self._horn_tx.q, self.f.w)
+        self.wout = _waist_from_q(self._horn_tx.q, self.freq.w)
         self.rout = _radius_from_q(self._horn_tx.q)
 
         if self._verbose:
-            print((self.__str__()))
+            print(self.__str__())
 
     def __str__(self):
 
@@ -87,7 +86,7 @@ class System(object):
             
         """
 
-        return _coupling(self.qout, self._horn_rx, self.f.w)
+        return _coupling(self.qout, self._horn_rx, self.freq.w)
 
     def best_coupling_frequency(self):
         """
@@ -102,7 +101,7 @@ class System(object):
 
         idx_best = self.coupling().argmax()
 
-        return self.f.f[idx_best]
+        return self.freq.f[idx_best]
 
     def best_coupling(self):
         """
@@ -128,12 +127,12 @@ class System(object):
 
         """
 
-        mult = util.set_f_units(units)
+        mult = gaussopt.util.set_f_units(units)
         best = self.best_coupling() * 100.
         f_best = self.best_coupling_frequency() / mult
 
         s = "Best coupling: {0:.1f} % at {1:.1f} {2}"
-        print((s.format(best, f_best, units)))
+        print(s.format(best, f_best, units))
 
     def plot_coupling(self, ax=None):
         """
@@ -141,13 +140,13 @@ class System(object):
         
         """
 
-        f = self.f.f / self.f.mult
+        f = self.freq.f / self.freq.mult
 
         if ax is None:
             fig, ax = plt.subplots()
         ax.plot(f, self.coupling() * 100.)
         ax.set(xlim=[f.min(), f.max()])
-        ax.set(xlabel='Frequency ({0})'.format(self.f.units))
+        ax.set(xlabel='Frequency ({0})'.format(self.freq.units))
         ax.set(ylabel='Coupling (\%)')
         plt.autoscale(enable=True, axis='y', tight=True)
         plt.grid(True)
@@ -161,13 +160,13 @@ class System(object):
 
         """
 
-        f = self.f.f / self.f.mult
+        f = self.freq.f / self.freq.mult
 
         if ax is None:
             fig, ax = plt.subplots()
         ax.plot(f, self.coupling())
         ax.set(xlim=[f.min(), f.max()])
-        ax.set(xlabel='Frequency ({0})'.format(self.f.units))
+        ax.set(xlabel='Frequency ({0})'.format(self.freq.units))
         ax.set(ylabel='Coupling (1)')
         if ax is None:
             plt.show()
@@ -178,20 +177,20 @@ class System(object):
 
         """
 
-        f = self.f.f / self.f.mult
+        f = self.freq.f / self.freq.mult
 
         if ax is None:
             fig, ax = plt.subplots()
         ax.plot(f, 10*np.log10(self.coupling()))
         ax.set(xlim=[f.min(), f.max()])
-        ax.set(xlabel='Frequency ({0})'.format(self.f.units))
+        ax.set(xlabel='Frequency ({0})'.format(self.freq.units))
         ax.set(ylabel='Coupling (dB)')
         if ax is None:
             plt.show()
 
     def plot_edge_taper_db(self, ax=None):
 
-        f = self.f.f / self.f.mult
+        f = self.freq.f / self.freq.mult
 
         if ax is None:
             fig, ax = plt.subplots()
@@ -200,12 +199,12 @@ class System(object):
             sys *= comp
             if comp.type == 'obj':
                 q = transform_beam(sys.matrix, self._horn_tx.q)
-                w = _waist_from_q(q, self.f.w)
+                w = _waist_from_q(q, self.freq.w)
                 et = _edge_taper(w, comp.radius, output='dB')
                 ax.plot(f, et, label=comp.comment)
         ax.legend()
         ax.set(xlim=[f.min(), f.max()])
-        ax.set(xlabel='Frequency ({0})'.format(self.f.units))
+        ax.set(xlabel='Frequency ({0})'.format(self.freq.units))
         ax.set(ylabel='Edge Taper (dB)')
         plt.tight_layout()
         if ax is None:
@@ -213,7 +212,7 @@ class System(object):
 
     def plot_waists(self, ax=None):
 
-        f = self.f.f / self.f.mult
+        f = self.freq.f / self.freq.mult
 
         if ax is None:
             fig, ax = plt.subplots()
@@ -222,18 +221,18 @@ class System(object):
             sys *= comp
             if comp.type == 'obj':
                 q = transform_beam(sys.matrix, self._horn_tx.q)
-                w = _waist_from_q(q, self.f.w) * 1e3
+                w = _waist_from_q(q, self.freq.w) * 1e3
                 ax.plot(f, w, label=comp.comment)
         ax.legend()
         ax.set(xlim=[f.min(), f.max()])
-        ax.set(xlabel='Frequency ({0})'.format(self.f.units))
+        ax.set(xlabel='Frequency ({0})'.format(self.freq.units))
         ax.set(ylabel='Beam Waist (mm)')
         if ax is None:
             plt.show()
 
     def plot_aperture_30db(self, ax=None):
 
-        f = self.f.f / self.f.mult
+        f = self.freq.f / self.freq.mult
 
         if ax is None:
             fig, ax = plt.subplots()
@@ -242,11 +241,11 @@ class System(object):
             sys *= comp
             if comp.type == 'obj':
                 q = transform_beam(sys.matrix, self._horn_tx.q)
-                w = _waist_from_q(q, self.f.w) * 1e3
+                w = _waist_from_q(q, self.freq.w) * 1e3
                 ax.plot(f, w*np.sqrt(30/8.686), label=comp.comment)
         ax.legend()
         ax.set(xlim=[f.min(), f.max()])
-        ax.set(xlabel='Frequency ({0})'.format(self.f.units))
+        ax.set(xlabel='Frequency ({0})'.format(self.freq.units))
         ax.set(ylabel='Required Aperture Radius (mm)')
         plt.tight_layout()
         if ax is None:
@@ -256,12 +255,12 @@ class System(object):
 
         # Frequency to plot waists for
         if freq is None:
-            idx = self.f.idx_center
+            idx = self.freq.idx_center
         else:
-            idx = self.f.idx(freq)
+            idx = self.freq.idx(freq)
 
         qin = self._horn_tx.q
-        wlen = self.f.w
+        wlen = self.freq.w
 
         if ax is None:
             fig, ax = plt.subplots()
@@ -287,7 +286,7 @@ class System(object):
         waist = np.array(waist)
         ax.plot(distance*1e3, waist*1e3, label='Beam waist')
         ax.plot(distance*1e3, waist*np.sqrt(30/8.686)*1e3, 'r--',
-                label='Aperture radius required\n'+ r'for $<$30 dB edge taper')
+                label='Aperture radius\n' + r'for $<$30 dB edge taper')
 
         # Add component radii and positions
         distance = self._comp_list[0].distance
@@ -297,11 +296,11 @@ class System(object):
             distance += comp.distance
             if comp.type == 'obj':
                 q = transform_beam(sys.matrix, self._horn_tx.q)
-                w = _waist_from_q(q, self.f.w)
+                w = _waist_from_q(q, self.freq.w)
 
                 ax.axvline(distance * 1e3, ls=':', lw=0.5, c='k')
 
-                ax.plot(distance * 1e3, comp.radius * 1e3, 'kx', lw=1, markersize=3)
+                ax.plot(distance * 1e3, comp.radius * 1e3, 'kx', lw=1, ms=3)
                 label = "A.R.".format(comp.comment)
                 ax.text(distance * 1e3, comp.radius * 1e3 + 4, label,
                         rotation=90, ha='center', va='bottom',
@@ -360,16 +359,47 @@ def transform_beam(sys_matrix, q_in):
 # Helper functions -----------------------------------------------------------
 
 def _waist_from_q(q, wavelength):
+    """
+    
+    Parameters
+    ----------
+    q : ndarray
+    wavelength : ndarray
+
+    Returns
+    -------
+
+    """
 
     return np.sqrt(wavelength / (np.pi * np.imag(-1 / q)))
 
 
 def _radius_from_q(q):
+    """
+    
+    Parameters
+    ----------
+    q : ndarray
+
+    Returns
+    -------
+
+    """
 
     return 1 / (np.real(1 / q))
 
 
 def _freespace_matrix(distance):
+    """
+    
+    Parameters
+    ----------
+    distance : float
+
+    Returns
+    -------
+
+    """
 
     return np.matrix([[1., distance], [0., 1.]])
 

@@ -1,23 +1,23 @@
-""" Classes for optical components.
+""" Optical components.
 
 """
 
 
+from copy import deepcopy as copy
+
+import matplotlib.pyplot as plt
 import numpy as np
 import scipy.constants as sc
-import matplotlib.pyplot as plt
-from copy import deepcopy as copy
-from .system import transform_beam
-from . import util
 
-component_verbosity = True
+import gaussopt
+from gaussopt.system import transform_beam
 
 
 # Optical component base-class ------------------------------------------------
 
 class Component(object):
     """
-    Base-class for a generic component in a Gaussian optical system.
+    Base-class for a general optical component.
     
     To get initialization information, see :func:`__init__`.
     
@@ -25,20 +25,32 @@ class Component(object):
     ----------
     matrix : ndarray
         beam transformation matrix, 2x2
+    comment : str
+        comment to describe component
+    radius : float
+        aperture radius of component
     
     """
 
     def __init__(self, matrix=None, **kwargs):
         """
-        Component constructor.
+        Construct component.
         
         Parameters
         ----------
         matrix : ndarray
-            beam transformation matrix, 2x2
-        \*\*kwargs : 
-            key word arguments, such as 'comment', 'units', 'radius' and 
-            'verbose'
+            2x2 beam transformation matrix
+        
+        Keyword Arguments
+        -----------------
+        comment : str
+            comment used to describe the component
+        units : str
+            units for length (default is mm)
+        radius : float
+            radius of aperture used to analyze edge taper
+        verbose : bool
+            print info to terminal?
             
         """
 
@@ -48,19 +60,20 @@ class Component(object):
         else:
             self.matrix = np.matrix([[1., 0.], [0., 1.]])
 
+        # Private attributes
+        self._units = kwargs.get('units', 'mm')
+        self._mult = gaussopt.util.set_d_units(self._units)
+        self._verbose = kwargs.get('verbose', True)
+
         # Unpack keyword arguments
         self.comment = kwargs.get('comment', '')
-        self._units = kwargs.get('units', 'mm')
-        self._mult = util.set_d_units(self._units)
         self.radius = kwargs.get('radius', None)
-        self._verbose = kwargs.get('verbose', component_verbosity)
-
         if self.radius is not None:
             self.radius *= self._mult
 
         # Set default values
-        self.distance = 0.
-        self.type = 'comp'
+        self.d = 0.  # distance
+        self._type = 'comp'  # component type
 
     def __str__(self):
 
@@ -71,6 +84,20 @@ class Component(object):
         return self.__str__()
 
     def __mul__(self, next_comp):
+        """
+        Cascade two optical components (using the multiplication symbol).
+        
+        Parameters
+        ----------
+        next_comp : Component
+            next component in optical system
+
+        Returns
+        -------
+        Component
+            the product of cascading two components together
+
+        """
 
         new_matrix = np.dot(next_comp.matrix, self.matrix)
         new_comp = Component(new_matrix, verbose=False,
@@ -91,45 +118,60 @@ class Freespace(Component):
     ----------
     matrix : ndarray
         beam transformation matrix, 2x2
+    comment : str
+        comment to describe component
+    d : float
+        freespace propagation distance
         
     """
 
     def __init__(self, distance, **kwargs):
         """
-        Freespace constructor.
+        Build freespace propagation component.
         
         Parameters
         ----------
         distance : float
             freespace propagation distance
-        \*\*kwargs : 
-            key word arguments, such as 'comment', 'units', 'radius' and 
-            'verbose'
+        
+        Keyword Arguments
+        -----------------
+        comment : str
+            comment to describe the component
+        units : str
+            units for length (default is mm)
+        verbose : bool
+            print info to terminal?
             
         """
 
+        # Initialize component
         Component.__init__(self, **kwargs)
 
-        self.type = 'prop'
-        self.distance = distance * self._mult
+        # Private attributes
+        self._type = 'prop'
 
-        self.matrix = np.matrix([[1., self.distance], [0., 1.]])
+        # Freespace propagation distance
+        self.d = distance * self._mult
+
+        # Build beam transformation matrix
+        self.matrix = np.matrix([[1., self.d], [0., 1.]])
 
         if self._verbose:
-            print((self.__str__()))
+            print(self.__str__())
 
     def __str__(self):
 
-        string = "Freespace: {0}\n\td = {1:.1f} {2}\n"
-        distance_red = self.distance / self._mult
-        string = string.format(self.comment, distance_red, self._units)
+        msg = "Freespace: {0}\n\td = {1:.1f} {2}\n"
+        d_print = self.d / self._mult
+        msg = msg.format(self.comment, d_print, self._units)
         
-        return string
+        return msg
 
 
 class Dielectric(Component):
     """
-    Propagation through a dielectric slab.
+    Propagation through a dielectric material.
     
     To get initialization information, see :func:`__init__`.
     
@@ -137,43 +179,62 @@ class Dielectric(Component):
     ----------
     matrix : ndarray
         beam transformation matrix, 2x2
-        
+    comment : str
+        comment to describe component
+    d : float
+        thickness of dielectric slab
+    n : float, optional
+        index of refraction
+            
     """
 
-    def __init__(self, thickness, n=1., **kwargs):
+    def __init__(self, thickness, n, **kwargs):
         """
-        Dielectric constructor.
+        Build dielectric propagation component.
         
         Parameters
         ----------
         thickness : float
             thickness of dielectric slab
-        n : float, optional
+        n : float
             index of refraction
-        \*\*kwargs : 
-            key word arguments, such as 'comment', 'units', 'radius' and 
-            'verbose'
+        
+        Keyword Arguments
+        -----------------
+        comment : str
+            comment to describe the component
+        units : str
+            units for length (default is mm)
+        verbose : bool
+            print info to terminal?
         
         """
 
+        # Initialize component
         Component.__init__(self, **kwargs)
 
-        self.type = 'prop'
-        self.distance = thickness * self._mult
-        self._n = n
+        # Private attributes
+        self._type = 'prop'
 
-        self.matrix = np.matrix([[1., self.distance * n], [0., 1.]])
+        # Thickness of dielectric slab
+        self.d = thickness * self._mult
+
+        # Index of refraction
+        self.n = n
+
+        # Build beam transformation matrix
+        self.matrix = np.matrix([[1., self.d * n], [0., 1.]])
 
         if self._verbose:
-            print((self.__str__()))
+            print(self.__str__())
 
     def __str__(self):
 
-        string = "Dielectric: {0}\n\td = {1:.1f} {2}, n = {3:.1f}\n"
-        d_red = self.distance / self._mult
-        string = string.format(self.comment, d_red, self._units, self._n)
+        msg = "Dielectric: {0}\n\td = {1:.1f} {2}, n = {3:.1f}\n"
+        d_print = self.d / self._mult
+        msg = msg.format(self.comment, d_print, self._units, self.n)
         
-        return string
+        return msg
 
 
 # Transformation classes ------------------------------------------------------
@@ -188,45 +249,62 @@ class Mirror(Component):
     ----------
     matrix : ndarray
         beam transformation matrix, 2x2
+    f : float
+        focal length of mirror, in units [m]
+    comment : str
+        comment to describe mirror
         
     """
 
     def __init__(self, focal_length, **kwargs):
         """
-        Mirror constructor.
+        Build parabolic mirror component.
         
         Parameters
         ----------
         focal_length : float
             mirror focal length
-        \*\*kwargs : 
-            key word arguments, such as 'comment', 'units', 'radius' and 
-            'verbose'
+        
+        Keyword Arguments
+        -----------------
+        comment : str
+            comment to describe the component
+        units : str
+            units for length (default is mm)
+        radius : float
+            radius of aperture (used to analyze edge taper)
+        verbose : bool
+            print info to terminal?
         
         """
 
+        # Initialize component
         Component.__init__(self, **kwargs)
 
-        self.type = 'obj'
-        self._focal_length = focal_length * self._mult
+        # Private attributes
+        self._type = 'obj'
+        
+        # Focal length of mirror
+        self.f = focal_length * self._mult
 
-        self.matrix = np.matrix([[1., 0.], [-1. / self._focal_length, 1.]])
+        # Build beam transformation matrix
+        self.matrix = np.matrix([[1., 0.], [-1. / self.f, 1.]])
 
         if self._verbose:
-            print((self.__str__()))
+            print(self.__str__())
 
     def __str__(self):
 
-        string = "Mirror: {0}\n\tf = {1:.1f} {2}\n"
-        f_red = self._focal_length / self._mult
-        string = string.format(self.comment, f_red, self._units)
+        msg = "Mirror: {0}\n\tf = {1:.1f} {2}\n"
+        f_red = self.f / self._mult
+        msg = msg.format(self.comment, f_red, self._units)
         
-        return string
+        return msg
 
 
 class Window(Component):
     """
-    A window.
+    Window and/or aperture.
     
     To get initialization information, see :func:`__init__`.
     
@@ -234,6 +312,10 @@ class Window(Component):
     ----------
     matrix : ndarray
         beam transformation matrix, 2x2
+    comment : str
+        comment to describe component
+    radius : float
+        aperture radius of window
         
     """
 
@@ -241,29 +323,34 @@ class Window(Component):
         """
         Window constructor.
         
-        Parameters
-        ----------
-        \*\*kwargs : 
-            key word arguments, such as 'comment', 'units', 'radius' and 
-            'verbose'
+        Keyword Arguments
+        -----------------
+        comment : str
+            comment to describe the component
+        units : str
+            units for length (default is mm)
+        radius : float
+            radius of aperture (used to analyze edge taper)
+        verbose : bool
+            print info to terminal?
         
         """
 
+        # Initialize component
         Component.__init__(self, **kwargs)
 
-        self.type = 'obj'
+        self._type = 'obj'
     
     def __str__(self):
 
         if self.radius is None:
-            string = "Window: {0}\n"
-            string = string.format(self.comment)
+            msg = "Window: {0}\n"
+            msg = msg.format(self.comment)
         else:
-            arad = self.radius * 1e3
-            string = "Window: {0}\n\taperture radius = {1:.1f} mm\n"
-            string = string.format(self.comment, arad)
+            msg = "Window: {0}\n\taperture radius = {1:.1f} mm\n"
+            msg = msg.format(self.comment, self.radius * 1e3)
 
-        return string
+        return msg
 
 
 # Horn ------------------------------------------------------------------------
@@ -276,18 +363,28 @@ class Horn(object):
     
     Attributes
     ----------
-    f : ndarray/float
-        frequency
+    matrix : ndarray
+        beam transformation matrix, 2x2
+    comment : str
+        comment to describe component
+    freq : ndarray/float
+        frequency sweep
     w : ndarray/float
-        beam waist at aperture
+        beam waist at aperture of horn
     z : ndarray/float
-        z-offset
+        z-offset of horn
     q : ndarray/complex
-        beam parameter at aperture
+        beam parameter at aperture of horn
+    slen : float
+        slant length of horn
+    arad : float
+        aperture radius of horn
+    hf : float, optional
+        horn factor
         
     """
 
-    def __init__(self, freq, slen, arad, hf=0.59, **kwargs):
+    def __init__(self, freq, slen, arad, hf, **kwargs):
         """
         Horn constructor.
         
@@ -301,41 +398,50 @@ class Horn(object):
             aperture radius
         hf : float, optional
             horn factor
-        \*\*kwargs : 
-            key word arguments, such as 'comment', 'units', and 'verbose'
+        
+        Keyword Arguments
+        -----------------
+        comment : str
+            comment to describe the component
+        units : str
+            units for length (default is mm)
+        verbose : bool
+            print info to terminal?
+
         """
 
-        self.type = 'horn'
-
-        self.comment = kwargs.get('comment', '')
+        # Private attributes
+        self._type = 'horn'
         self._units = kwargs.get('units', 'mm')
-        self.radius = kwargs.get('radius', None)
-        self._verbose = kwargs.get('verbose', component_verbosity)
+        self._verbose = kwargs.get('verbose', True)
+        self._mult = gaussopt.util.set_d_units(self._units)
 
-        self._mult = util.set_d_units(self._units)
+        # Unpack keyword arguments
+        self.comment = kwargs.get('comment', '')
 
-        slen *= self._mult
-        arad *= self._mult
+        # Horn properties
+        self.slen = slen * self._mult  # slant length
+        self.arad = arad * self._mult  # aperture radius
+        self.hf = hf  # horn factor
 
-        self._slen = slen
-        self._arad = arad
-        self._hf = hf
-        self.f = freq
+        # Frequency sweep
+        self.freq = freq
 
-        self.q, self.w, self.z = _horn(slen, arad, hf, freq.w)
+        # Calculate horn parameters
+        self.q, self.w, self.z = _horn(self.slen, self.arad, self.hf, freq.w)
 
         if self._verbose:
-            print((self.__str__()))
+            print(self.__str__())
 
     def __str__(self):
 
-        slen = self._slen / self._mult
-        arad = self._arad / self._mult
+        slen = self.slen / self._mult
+        arad = self.arad / self._mult
         units = self._units
 
         p1 = "\tslen = {0:5.2f} {1}\n".format(slen, units)
         p2 = "\tarad = {0:5.2f} {1}\n".format(arad, units)
-        p3 = "\thf   = {0:5.2f}\n".format(self._hf)
+        p3 = "\thf   = {0:5.2f}\n".format(self.hf)
 
         return 'Horn: {0}\n{1}{2}{3}'.format(self.comment, p1, p2, p3)
 
@@ -345,12 +451,13 @@ class Horn(object):
 
     def z_offset(self, units='mm'):
         """
-        Get distance between horn aperture and beam waist (a.k.a. z-offset).
+        Calculate distance between horn aperture and beam waist (i.e., the 
+        z-offset).
         
-        Parameters
-        ----------
-        units : str, optional
-            units to use for returned value
+        Keyword Arguments
+        -----------------
+        units : str
+            units to use for offset value
 
         Returns
         -------
@@ -359,17 +466,18 @@ class Horn(object):
 
         """
 
-        mult = util.set_d_units(units)
+        # Multiplier for distance units
+        mult = gaussopt.util.set_d_units(units)
 
         return self.z / mult
 
     def waist(self, units='mm'):
         """
-        Beam waist at aperture.
+        Calculate beam waist at aperture.
         
-        Parameters
-        ----------
-        units : str, optional
+        Keyword Arguments
+        -----------------
+        units : str
             units to use for returned values
 
         Returns
@@ -379,7 +487,8 @@ class Horn(object):
 
         """
 
-        mult = util.set_d_units(units)
+        # Multiplier for distance units
+        mult = gaussopt.util.set_d_units(units)
 
         return self.w / mult
 
@@ -387,10 +496,12 @@ class Horn(object):
         """
         Copy horn to new instance.
         
-        Parameters
-        ----------
-        \*\*kwargs : 
-            keyword arguments to pass to new instance
+        Keyword Arguments
+        -----------------
+        comment : str
+            comment to describe the copied component
+        verbose : bool
+            print info to terminal?
 
         Returns
         -------
@@ -399,28 +510,28 @@ class Horn(object):
 
         """
 
-        tmp = copy(self)
-        tmp.comment = kwargs.get('comment', '')
-        tmp._verbose = kwargs.get('verbose', component_verbosity)
-        if tmp._verbose:
-            print((tmp.__str__()))
+        new_comp = copy(self)
+        new_comp.comment = kwargs.get('comment', '')
+        new_comp._verbose = kwargs.get('verbose', True)
+        if new_comp._verbose:
+            print(new_comp.__str__())
 
-        return tmp
+        return new_comp
 
     def plot_properties(self):
         """
-        Plots beam waist and z-offset over frequency range.
+        Plot beam waist and z-offset over frequency range.
 
         """
 
-        f = self.f.f / self.f._mult
+        freq = self.freq.f
 
         fig, ax = plt.subplots()
-        ax.plot(f, self.w / self._mult, label='Waist at Aperture')
-        ax.plot(f, self.z / self._mult, label='Z offset')
-        ax.set(xlim=[f.min(), f.max()])
-        ax.set(xlabel='Frequency ({0})'.format(self.f._units))
-        ax.set(ylabel='Size ({0})'.format(self._units))
+        ax.plot(freq / 1e9, self.w * 1e3, label='Waist at Aperture')
+        ax.plot(freq / 1e9, self.z * 1e3, label='Z offset')
+        ax.set(xlim=[freq.min() / 1e9, freq.max() / 1e9])
+        ax.set(xlabel='Frequency (GHz)')
+        ax.set(ylabel='Size (mm)')
         plt.legend()
         plt.show()
 
@@ -475,8 +586,6 @@ def _horn(slen, arad, hf, wlen):
 
         return qap_arr, w_arr, zoff_arr
 
-      
-# Helper functions -----------------------------------------------------------
 
 def _q_from_waist(waist, wlen):
     """
