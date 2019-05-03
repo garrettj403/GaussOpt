@@ -2,17 +2,14 @@
 
 """
 
+import gaussopt.component
+import gaussopt.frequency
+import gaussopt.system
+import gaussopt.util
 
-
-from . import frequency
-from . import component
-from . import system
-from . import util
-
-from .frequency import *
-from .component import *
-from .system import System 
-from .util import set_verbosity
+from gaussopt.frequency import *
+from gaussopt.component import *
+from gaussopt.system import System
 
 __author__ = "John Garrett"
 __version__ = "0.1"
