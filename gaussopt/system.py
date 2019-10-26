@@ -280,6 +280,11 @@ class System(object):
                     w = _waist_from_q(q, wlen)
                     waist.append(w[idx])
                     distance.append(d + d_last_comp)
+            if isinstance(comp, gaussopt.component.Dielectric):
+                if comp.radius is not None:
+                    ax.axvspan(d_last_comp*1e3, (d_last_comp+comp.d)*1e3, ymax=comp.radius*10, alpha=0.5, color='dodgerblue')
+                else:
+                    ax.axvspan(d_last_comp*1e3, (d_last_comp+comp.d)*1e3, alpha=0.5, color='dodgerblue')
             d_last_comp += comp.d
             sys = np.dot(comp.matrix, sys)
         distance = np.array(distance)
@@ -293,8 +298,7 @@ class System(object):
         sys = self._comp_list[0]
         for comp in self._comp_list[1:]:
             sys *= comp
-            distance += comp.d
-            if comp.type == 'obj':
+            if comp.type == 'obj' or isinstance(comp, gaussopt.component.Dielectric):
                 q = transform_beam(sys.matrix, self._horn_tx.q)
                 w = _waist_from_q(q, self.freq.w)
 
@@ -316,6 +320,7 @@ class System(object):
                         bbox=dict(boxstyle='round', facecolor='wheat',
                                   alpha=1),
                         fontsize=8)
+            distance += comp.d
 
         ax.set(ylim=[0, 100], ylabel='Size (mm)')
         plt.autoscale(enable=True, axis='x', tight=True)
