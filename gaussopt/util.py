@@ -1,10 +1,157 @@
-""" General utilities.
+"""General utilities.
 
 """
 
 
 import scipy.constants as sc
 
+
+# Useful equations -----------------------------------------------------------
+
+def get_beam_radius(z, w0, wavel):
+    """
+    Get beam radius (w).
+
+    Requires distance (z) and beam waist (w0).
+
+    Note
+    ----
+    All parameters should be defined in the same units, including the output!
+    
+    Parameters
+    ----------
+    z : float
+        distance from beam waist
+    w0 : float
+        beam waist
+    wavel : float
+        wavelength
+
+    Returns
+    -------
+    float 
+        beam radius, i.e., the radial distance at which the E-field drops off 
+        to 1/e of its on-axis value
+
+    """
+
+    return w0 * (1 + ((wavel * z) / (sc.pi * w0**2))**2)**0.5
+
+
+def get_radius_of_curvature(z, w0, wavel):
+    """
+    Get radius of curvature (R) at a given distance (z).
+
+    Requires distance (z) and beamwaist (w0).
+
+    Note
+    ----
+    All parameters should be defined in the same units, including the output!
+    
+    Parameters
+    ----------
+    z : float
+        distance from beam waist
+    w0 : float
+        beam waist
+    wavel : float
+        wavelength
+
+    Returns
+    -------
+    float 
+        radius of curvature (R)
+
+    """
+
+    return z * (1 + ((sc.pi * w0**2) / (wavel * z))**2)
+
+
+def get_confocal_distance(w0, wavel):
+    """
+    Get confocal distance (z_c).
+
+    Requires beam waist and wavelength.
+
+    This value generally defines the separation between near- and far-field.
+
+    Note
+    ----
+    Beam waist and wavelength should be defined in the same units!
+    
+    Parameters
+    ----------
+    w0 : float
+        beam waist
+    wavel : float
+        wavelength
+
+    Returns
+    -------
+    float 
+        confocal distance (z_c)
+
+    """
+
+    return sc.pi * w0**2 / wavel
+
+
+def get_far_field_angle(w0, wavel):
+    """
+    Get far-field divergence angle (theta_0).
+
+    Requires beam waist and wavelength.
+
+    Note
+    ----
+    Beam waist and wavelength should be defined in the same units!
+    
+    Parameters
+    ----------
+    w0 : float
+        beam waist
+    wavel : float
+        wavelength
+
+    Returns
+    -------
+    float 
+        far-field divergence angle (theta_0), i.e., the angle at which the 
+        beam waist grows in the far-field
+
+    """
+
+    return wavel / sc.pi / w0
+
+
+def get_fwhm(w0, wavel):
+    """
+    Get full width of half-maximum angle (theta_FWHM).
+
+    Requires beam waist and wavelength.
+
+    Note
+    ----
+    Beam waist and wavelength should be defined in the same units!
+
+    Parameters
+    ----------
+    w0 : float
+        beam waist
+    wavel : float
+        wavelength
+
+    Returns
+    -------
+    float 
+        full width of half-maximum angle (theta_FWHM)
+
+    """
+
+    return 1.18 * get_far_field_angle(w0, wavel)
+
+
+# Set units ------------------------------------------------------------------
 
 def set_d_units(units):
     """
