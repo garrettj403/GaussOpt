@@ -105,6 +105,32 @@ class Component(object):
 
         return new_comp
 
+    def copy(self, **kwargs):
+        """
+        Copy component to new instance.
+        
+        Keyword Arguments
+        -----------------
+        comment : str
+            comment to describe the copied component
+        verbose : bool
+            print info to terminal?
+
+        Returns
+        -------
+        class
+            new instance of the Component class
+
+        """
+
+        new_comp = copy(self)
+        new_comp.comment = kwargs.get('comment', '')
+        new_comp._verbose = kwargs.get('verbose', True)
+        if new_comp._verbose:
+            print(new_comp.__str__())
+
+        return new_comp
+
 
 # Propagation classes ---------------------------------------------------------
 
