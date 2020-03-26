@@ -22,6 +22,6 @@ my-projects/
 
 dist/
 htmlcov/
-QMix.egg-info/
+*.egg-info/
 
 Makefile
