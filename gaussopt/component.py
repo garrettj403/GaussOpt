@@ -584,6 +584,82 @@ class Window(Component):
         return msg
 
 
+class ThickLens(Component):
+    """
+    Transmission through a thick lens.
+
+    "Thick" meaning that the transmission through the dielectric material is 
+    included in the model. 
+    
+    To get initialization information, see :func:`__init__`.
+    
+    Attributes
+    ----------
+    matrix : ndarray
+        beam transformation matrix, 2x2
+    f : float
+        focal length of the thick lens, in units [m]
+    comment : str
+        comment to describe the thick lens
+        
+    """
+
+    def __init__(self, n1, n2, d, r1, r2, **kwargs):
+        """
+        Build thick lens component.
+        
+        Parameters
+        ----------
+        n1 : float
+            refractive index #1
+        n2 : float
+            refractive index #2 (i.e., the lens material)
+        d : float
+            thickness of the lens, in units [m]
+        r1 : float
+            radius of curvature of surface #1, in units [m]
+        r1 : float
+            radius of curvature of surface #2, in units [m]
+        
+        Keyword Arguments
+        -----------------
+        comment : str
+            comment to describe the component
+        units : str
+            units for length (default is mm)
+        radius : float
+            radius of aperture (used to analyze edge taper)
+        verbose : bool
+            print info to terminal?
+        
+        """
+
+        # Initialize component
+        Component.__init__(self, **kwargs)
+
+        # Private attributes
+        self.type = 'obj'
+        
+        # Focal length of thick len
+        tmp = (n2 - n1) / n1 * (1 / r2 - 1 / r1)
+        self.f = 1 / tmp
+
+        # Build beam transformation matrix
+        self.matrix = np.matrix([[A, B], [C, D]])
+
+        if self._verbose:
+            print(self.__str__())
+
+    def __str__(self):
+
+        msg1 = "Thick lens: {0}\n\tf = {1:.1f} {2}\n"
+        msg1 = "            {0}\n\td = {1:.1f} {2}\n"
+        f_red = self.f / self._mult
+        msg = msg.format(self.comment, f_red, self._units)
+        
+        return msg
+
+
 # Horn ------------------------------------------------------------------------
 
 class Horn(object):
