@@ -3,6 +3,8 @@
 """
 
 
+import numpy as np 
+
 import gaussopt
 
 
@@ -62,6 +64,21 @@ def test_dielectric():
     assert air.matrix[1, 1] == diel.matrix[1, 1]
 
 
+def test_simple_focusing_elements():
+
+    # Focal length = 160 mm
+    f = 160
+
+    comp1 = gaussopt.component.Mirror(f, verbose=False)
+    comp2 = gaussopt.component.ThinLens(f, verbose=False)
+    comp3 = gaussopt.component.SphericalMirror(2 * f, verbose=False)
+    comp4 = gaussopt.component.EllipsoidalMirror(f * 2, f * 2, verbose=False)
+
+    np.testing.assert_array_equal(comp1.matrix, comp2.matrix)
+    np.testing.assert_array_equal(comp1.matrix, comp3.matrix)
+    np.testing.assert_array_equal(comp1.matrix, comp4.matrix)
+
+
 # def test_edge_taper():
 #
 #     beam_waist = 30
@@ -111,3 +128,7 @@ def test_dielectric():
 #     assert coupling == 1.
 #
 #     return frequency, coupling
+
+if __name__ == "__main__":
+
+    test_simple_focusing_elements()
