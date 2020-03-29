@@ -328,6 +328,72 @@ class Mirror(Component):
         return msg
 
 
+class ThinLens(Component):
+    """
+    Transmission through a thin lens.
+
+    "Thin" meaning that the transmission through the dielectric material is 
+    not included in the model. 
+    
+    To get initialization information, see :func:`__init__`.
+    
+    Attributes
+    ----------
+    matrix : ndarray
+        beam transformation matrix, 2x2
+    f : float
+        focal length of the thin lens, in units [m]
+    comment : str
+        comment to describe the thin lens
+        
+    """
+
+    def __init__(self, focal_length, **kwargs):
+        """
+        Build thin lens component.
+        
+        Parameters
+        ----------
+        focal_length : float
+            thin lens focal length
+        
+        Keyword Arguments
+        -----------------
+        comment : str
+            comment to describe the component
+        units : str
+            units for length (default is mm)
+        radius : float
+            radius of aperture (used to analyze edge taper)
+        verbose : bool
+            print info to terminal?
+        
+        """
+
+        # Initialize component
+        Component.__init__(self, **kwargs)
+
+        # Private attributes
+        self.type = 'obj'
+        
+        # Focal length of thin len
+        self.f = focal_length * self._mult
+
+        # Build beam transformation matrix
+        self.matrix = np.matrix([[1., 0.], [-1. / self.f, 1.]])
+
+        if self._verbose:
+            print(self.__str__())
+
+    def __str__(self):
+
+        msg = "Thin lens: {0}\n\tf = {1:.1f} {2}\n"
+        f_red = self.f / self._mult
+        msg = msg.format(self.comment, f_red, self._units)
+        
+        return msg
+
+
 class Window(Component):
     """
     Window and/or aperture.
