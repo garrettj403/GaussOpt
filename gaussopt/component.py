@@ -394,6 +394,145 @@ class ThinLens(Component):
         return msg
 
 
+class SphericalMirror(Component):
+    """
+    Reflection off of a spherical mirror
+    
+    To get initialization information, see :func:`__init__`.
+    
+    Attributes
+    ----------
+    matrix : ndarray
+        beam transformation matrix, 2x2
+    f : float
+        focal length of the mirror, in units [m]
+    R : floag
+        radius of curvature of the mirror, in units [m]
+    comment : str
+        comment to describe the mirror
+    radius_curv : float
+        radius of curvature, in units [m]
+        
+    """
+
+    def __init__(self, radius_curv, **kwargs):
+        """
+        Build spherical mirror component.
+        
+        Parameters
+        ----------
+        radius_curv : float
+            radius of curvature, in units [m]
+        
+        Keyword Arguments
+        -----------------
+        comment : str
+            comment to describe the component
+        units : str
+            units for length (default is mm)
+        radius : float
+            radius of aperture (used to analyze edge taper)
+        verbose : bool
+            print info to terminal?
+        
+        """
+
+        # Initialize component
+        Component.__init__(self, **kwargs)
+
+        # Private attributes
+        self.type = 'obj'
+        
+        # Focal length of thin len
+        self.f = radius_curv * self._mult / 2
+        self.radius_curv = radius_curv
+
+        # Build beam transformation matrix
+        self.matrix = np.matrix([[1., 0.], [-1. / self.f, 1.]])
+
+        if self._verbose:
+            print(self.__str__())
+
+    def __str__(self):
+
+        msg = "Spherical mirror: {0}\n\tf = {1:.1f} {2}\n"
+        f_red = self.f / self._mult
+        msg = msg.format(self.comment, f_red, self._units)
+        
+        return msg
+
+
+class EllipsoidalMirror(Component):
+    """
+    Reflection off of an ellipsoidal mirror
+    
+    To get initialization information, see :func:`__init__`.
+    
+    Attributes
+    ----------
+    matrix : ndarray
+        beam transformation matrix, 2x2
+    f : float
+        focal length of the mirror, in units [m]
+    d1 : float
+        dimension d1
+    d2 : float
+        dimension d2
+    comment : str
+        comment to describe the mirror
+        
+    """
+
+    def __init__(self, d1, d2, **kwargs):
+        """
+        Build ellipsoidal mirror component.
+        
+        Parameters
+        ----------
+        d1 : float
+            dimension d1
+        d2 : float
+            dimension d2
+        
+        Keyword Arguments
+        -----------------
+        comment : str
+            comment to describe the component
+        units : str
+            units for length (default is mm)
+        radius : float
+            radius of aperture (used to analyze edge taper)
+        verbose : bool
+            print info to terminal?
+        
+        """
+
+        # Initialize component
+        Component.__init__(self, **kwargs)
+
+        # Private attributes
+        self.type = 'obj'
+        
+        # Focal length of thin len
+        self.f = d1 * d2 / (d1 + d2)
+        self.d1 = d1
+        self.d2 = d2
+
+        # Build beam transformation matrix
+        self.matrix = np.matrix([[1., 0.], [-1. / self.f, 1.]])
+
+        if self._verbose:
+            print(self.__str__())
+
+    def __str__(self):
+
+        msg = "Ellipsoidal mirror: {0}\n\tf = {1:.1f} {2}\n"
+        f_red = self.f / self._mult
+        msg = msg.format(self.comment, f_red, self._units)
+        
+        return msg
+
+
 class Window(Component):
     """
     Window and/or aperture.
