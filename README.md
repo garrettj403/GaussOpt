@@ -6,14 +6,14 @@ GaussOpt
 
 *Analyze quasioptical systems using Gaussian beam analysis*
 
-This package assumes Gaussian beam propagation to analyze quasioptical systems. Quasioptical analysis is important whenever the size of the optical components is comparable to the wavelength. Gaussian beam analysis of quasioptical systems then assumes that the transverse amplitude profile of the beam is close to a Gaussian function, which is approximately true for beams originating from waveguide horn antennas.
+This package uses Gaussian beam propagation to analyze quasioptical systems. Quasioptical systems are those where the size of the optical components is comparable to the wavelength. Gaussian beam analysis of quasioptical systems then assumes that the transverse amplitude profile of the beam is very close to a Gaussian distribution, which is approximately true for beams originating from waveguide horn antennas.
 
 **Webpage:** https://garrettj403.github.io/GaussOpt/
 
 Description
 -----------
 
-At millimeter and submillimeter wavelengths, traditional transmission lines (e.g., microstrips and waveguides) have very high attenuation constants. To avoid this loss, an alternative is to use freespace propagation. However, since the dimensions of the optical components are often only a few times the wavelength, the beams cannot be effectively collimated and then a series of lenses or parabolic mirrors are required to continually refocus the beam. This type of system is often called a quasioptical system ("quasi" because standard geometric optics do not apply).
+At millimeter and submillimeter wavelengths, traditional RF transmission lines (e.g., microstrips and waveguides) have very high attenuation constants. To avoid this loss, an alternative is to use guided freespace propagation. However, since the dimensions of the optical components are often only a few times the wavelength, the beams cannot be effectively collimated and then a series of lenses or parabolic mirrors are required to continually refocus the beam. This type of system is often called a quasioptical system ("quasi" because standard geometric optics do not apply).
 
 Beams in quasioptical systems typically originate/terminate in waveguide feed horns. The transverse amplitude profile of these beams is very close to a Gaussian distribution, which can be used to simplify the description of the beam as it propagates through a quasioptical system. In short, Gaussian beam analysis is a simplified formulation of physical optics; however, it is sufficient for most applications and at least provides a starting point for more rigorous analysis.
 
