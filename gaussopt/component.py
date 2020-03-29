@@ -445,7 +445,7 @@ class SphericalMirror(Component):
         
         # Focal length of thin len
         self.f = radius_curv * self._mult / 2
-        self.radius_curv = radius_curv
+        self.radius_curv = radius_curv * self._mult
 
         # Build beam transformation matrix
         self.matrix = np.matrix([[1., 0.], [-1. / self.f, 1.]])
@@ -490,9 +490,9 @@ class EllipsoidalMirror(Component):
         Parameters
         ----------
         d1 : float
-            dimension d1
+            dimension d1, in units [m]
         d2 : float
-            dimension d2
+            dimension d2, in units [m]
         
         Keyword Arguments
         -----------------
@@ -514,9 +514,9 @@ class EllipsoidalMirror(Component):
         self.type = 'obj'
         
         # Focal length of thin len
-        self.f = d1 * d2 / (d1 + d2)
-        self.d1 = d1
-        self.d2 = d2
+        self.d1 = d1 * self._mult
+        self.d2 = d2 * self._mult
+        self.f = (1 / self.d1 + 1 / self.d2) ** -1
 
         # Build beam transformation matrix
         self.matrix = np.matrix([[1., 0.], [-1. / self.f, 1.]])
