@@ -24,7 +24,7 @@ class Frequency(object):
     
     """
 
-    def __init__(self, start=None, stop=None, npts=301, units='GHz', **kwargs):
+    def __init__(self, start=None, stop=None, npts=None, freq=None, units='GHz', **kwargs):
         """
         Build frequency sweep.
         
@@ -65,13 +65,14 @@ class Frequency(object):
         elif center is not None and span is not None:
             start = center - span / 2
             stop = center + span / 2
-        elif start is None and stop is None:
-            start = 200
-            stop = 300
         
-        self.f = np.linspace(start, stop, npts) * self.unit_mult
-        self.w = sc.c / self.f
-        self.idx_center = npts // 2
+        if start is not None and stop is not None and npts is not None:
+            self.f = np.linspace(start, stop, npts) * self.unit_mult
+        elif freq is not None:
+            self.f = freq
+        else:
+            print("You must specify start+stop+npts or freq.")
+            raise ValueError
 
         if verbose:
             print(self.__str__())
@@ -102,6 +103,22 @@ class Frequency(object):
 
         return np.array_equal(self.f, other.f)
 
+    @property
+    def f(self):
+        """Get frequency in Hz."""
+        return self._f
+
+    @f.setter
+    def f(self, value):
+        """Set frequency and wavelength."""
+        self._f = value
+        if value is not None:
+            self.w = sc.c / value
+            self.idx_center = len(value) // 2
+        else:
+            self.w = None
+            self.idx_center = None
+    
     def idx(self, freq, units='GHz'):
         """
         Get index of value closest to specified frequency.
@@ -111,7 +128,7 @@ class Frequency(object):
         freq : float
             target frequency
         units : str 
-            units for the frequency
+            units for frequency
 
         Returns
         -------
