@@ -58,7 +58,7 @@ class Component(object):
         if matrix is not None:
             self.matrix = matrix
         else:
-            self.matrix = np.matrix([[1., 0.], [0., 1.]])
+            self.matrix = np.array([[1., 0.], [0., 1.]])
 
         # Private attributes
         self._units = kwargs.get('units', 'mm')
@@ -181,7 +181,7 @@ class Freespace(Component):
         self.d = distance * self._mult
 
         # Build beam transformation matrix
-        self.matrix = np.matrix([[1., self.d], [0., 1.]])
+        self.matrix = np.array([[1., self.d], [0., 1.]])
 
         if self._verbose:
             print(self.__str__())
@@ -249,7 +249,7 @@ class Dielectric(Component):
         self.n = n
 
         # Build beam transformation matrix
-        self.matrix = np.matrix([[1., self.d * n], [0., 1.]])
+        self.matrix = np.array([[1., self.d * n], [0., 1.]])
 
         if self._verbose:
             print(self.__str__())
@@ -314,7 +314,7 @@ class Mirror(Component):
         self.f = focal_length * self._mult
 
         # Build beam transformation matrix
-        self.matrix = np.matrix([[1., 0.], [-1. / self.f, 1.]])
+        self.matrix = np.array([[1., 0.], [-1. / self.f, 1.]])
 
         if self._verbose:
             print(self.__str__())
@@ -380,7 +380,7 @@ class ThinLens(Component):
         self.f = focal_length * self._mult
 
         # Build beam transformation matrix
-        self.matrix = np.matrix([[1., 0.], [-1. / self.f, 1.]])
+        self.matrix = np.array([[1., 0.], [-1. / self.f, 1.]])
 
         if self._verbose:
             print(self.__str__())
@@ -448,7 +448,7 @@ class SphericalMirror(Component):
         self.radius_curv = radius_curv * self._mult
 
         # Build beam transformation matrix
-        self.matrix = np.matrix([[1., 0.], [-1. / self.f, 1.]])
+        self.matrix = np.array([[1., 0.], [-1. / self.f, 1.]])
 
         if self._verbose:
             print(self.__str__())
@@ -519,7 +519,7 @@ class EllipsoidalMirror(Component):
         self.f = (1 / self.d1 + 1 / self.d2) ** -1
 
         # Build beam transformation matrix
-        self.matrix = np.matrix([[1., 0.], [-1. / self.f, 1.]])
+        self.matrix = np.array([[1., 0.], [-1. / self.f, 1.]])
 
         if self._verbose:
             print(self.__str__())
@@ -645,7 +645,7 @@ class ThickLens(Component):
         self.f = 1 / tmp
 
         # Build beam transformation matrix
-        self.matrix = np.matrix([[A, B], [C, D]])
+        self.matrix = np.array([[A, B], [C, D]])
 
         if self._verbose:
             print(self.__str__())
@@ -958,7 +958,7 @@ def _horn(slen, arad, hf, wlen):
     # A crappy hack, but this isn't a computer intensive package
     elif type(wlen) == np.ndarray:
 
-        npts = np.alen(wlen)
+        npts = len(wlen)
         qap_arr = np.zeros_like(wlen, dtype=complex)
         w_arr = np.zeros_like(wlen)
         zoff_arr = np.zeros_like(wlen)

@@ -61,7 +61,8 @@ class System(object):
 
         self._system = component_list[0]
         for comp in component_list[1:]:
-            self._system *= comp 
+            # self._system *= comp 
+            self._system = np.dot(comp, self._system)
         self.matrix = self._system.matrix
 
         self.qout = transform_beam(self.matrix, self._horn_tx.q)
@@ -103,7 +104,7 @@ class System(object):
         d_last_comp = 0.
         distance = []
         waist = []
-        sys = np.matrix([[1., 0], [0., 1.]])
+        sys = np.array([[1., 0], [0., 1.]])
         for comp in self._comp_list:
             if comp.type == 'prop':
                 d_tmp = np.arange(comp.d, step=1e-3)
@@ -229,7 +230,8 @@ class System(object):
             fig, ax = plt.subplots()
         sys = self._comp_list[0]
         for comp in self._comp_list[1:]:
-            sys *= comp
+            # sys *= comp
+            sys = np.dot(comp, sys)
             if comp.type == 'obj':
                 q = transform_beam(sys.matrix, self._horn_tx.q)
                 w = _waist_from_q(q, self.freq.w)
@@ -251,7 +253,8 @@ class System(object):
             fig, ax = plt.subplots()
         sys = self._comp_list[0]
         for comp in self._comp_list[1:]:
-            sys *= comp
+            # sys *= comp
+            sys = np.dot(comp, sys)
             if comp.type == 'obj':
                 q = transform_beam(sys.matrix, self._horn_tx.q)
                 w = _waist_from_q(q, self.freq.w) * 1e3
@@ -271,7 +274,8 @@ class System(object):
             fig, ax = plt.subplots()
         sys = self._comp_list[0]
         for comp in self._comp_list[1:]:
-            sys *= comp
+            # sys *= comp
+            sys = np.dot(comp, sys)
             if comp.type == 'obj':
                 q = transform_beam(sys.matrix, self._horn_tx.q)
                 w = _waist_from_q(q, self.freq.w) * 1e3
@@ -302,7 +306,7 @@ class System(object):
         d_last_comp = 0.
         distance = []
         waist = []
-        sys = np.matrix([[1., 0], [0., 1.]])
+        sys = np.array([[1., 0], [0., 1.]])
         for comp in self._comp_list:
             if comp.type == 'prop':
                 d_tmp = np.arange(comp.d, step=1e-3)
@@ -330,7 +334,8 @@ class System(object):
         distance = self._comp_list[0].d
         sys = self._comp_list[0]
         for comp in self._comp_list[1:]:
-            sys *= comp
+            # sys *= comp
+            sys = np.dot(comp, sys)
             if comp.type == 'obj' or isinstance(comp, gaussopt.component.Dielectric):
                 q = transform_beam(sys.matrix, self._horn_tx.q)
                 w = _waist_from_q(q, self.freq.w)
@@ -439,7 +444,7 @@ def _freespace_matrix(distance):
 
     """
 
-    return np.matrix([[1., distance], [0., 1.]])
+    return np.array([[1., distance], [0., 1.]])
 
 
 def _coupling(qin, horn_rx, wavelength):
@@ -462,8 +467,8 @@ def _coupling(qin, horn_rx, wavelength):
     zoff = horn_rx.z
 
     if isinstance(wavelength, np.ndarray):
-        qout = np.zeros(np.alen(wavelength), dtype=complex)
-        for i in range(np.alen(wavelength)):
+        qout = np.zeros(len(wavelength), dtype=complex)
+        for i in range(len(wavelength)):
             qout[i] = transform_beam(_freespace_matrix(zoff[i]), qin[i])
     else:
         qout = transform_beam(_freespace_matrix(zoff), qin)
