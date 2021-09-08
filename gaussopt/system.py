@@ -73,7 +73,7 @@ class System(object):
 
     def __str__(self):
 
-        return "System: {0}\n{1}".format(self.comment, self.matrix)
+        return "System: {0}\n{1}\n".format(self.comment, self.matrix)
 
     def coupling(self):
         """
@@ -87,6 +87,39 @@ class System(object):
         """
 
         return _coupling(self.qout, self._horn_rx, self.freq.w)
+
+    def waist(self, freq=None):
+
+        # Frequency to plot waists for
+        if freq is None:
+            idx = self.freq.idx_center
+        else:
+            idx = self.freq.idx(freq)
+
+        qin = self._horn_tx.q
+        wlen = self.freq.w
+
+        # Plot waist as a function of distance
+        d_last_comp = 0.
+        distance = []
+        waist = []
+        sys = np.matrix([[1., 0], [0., 1.]])
+        for comp in self._comp_list:
+            if comp.type == 'prop':
+                d_tmp = np.arange(comp.d, step=1e-3)
+                for d in d_tmp:
+                    m_tmp = _freespace_matrix(d)
+                    s_tmp = np.dot(m_tmp, sys)
+                    q = transform_beam(s_tmp, qin)
+                    w = _waist_from_q(q, wlen)
+                    waist.append(w[idx])
+                    distance.append(d + d_last_comp)
+            d_last_comp += comp.d
+            sys = np.dot(comp.matrix, sys)
+        distance = np.array(distance)
+        waist = np.array(waist)
+
+        return distance, waist 
 
     def best_coupling_frequency(self):
         """
