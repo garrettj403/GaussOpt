@@ -843,6 +843,82 @@ class Horn(object):
         plt.show()
 
 
+class Beam(Horn):
+    """
+    Waveguide horn antenna.
+    
+    To get initialization information, see :func:`__init__`.
+    
+    Attributes
+    ----------
+    matrix : ndarray
+        beam transformation matrix, 2x2
+    comment : str
+        comment to describe component
+    freq : ndarray/float
+        frequency sweep
+    w : ndarray/float
+        beam waist at aperture of horn
+    z : ndarray/float
+        z-offset of horn
+    q : ndarray/complex
+        beam parameter at aperture of horn
+    slen : float
+        slant length of horn
+    arad : float
+        aperture radius of horn
+    hf : float, optional
+        horn factor
+        
+    """
+
+    def __init__(self, freq, w0, zoffset, **kwargs):
+        """
+        Horn constructor.
+        
+        Parameters
+        ----------
+        freq : class 'gaussopt.frequency.Frequency'
+            frequency class
+        
+        Keyword Arguments
+        -----------------
+        comment : str
+            comment to describe the component
+        units : str
+            units for length (default is mm)
+        verbose : bool
+            print info to terminal?
+
+        """
+
+        # Private attributes
+        self.type = 'beam'
+        self._units = kwargs.get('units', 'mm')
+        self._verbose = kwargs.get('verbose', True)
+        self._mult = gaussopt.util.set_d_units(self._units)
+
+        # Unpack keyword arguments
+        self.comment = kwargs.get('comment', '')
+
+        # Frequency sweep
+        self.freq = freq
+
+        # Calculate horn parameters
+        wavelength = sc.c / freq.f
+        self.w = w0 * np.sqrt(1 + (wavelength * zoffset / sc.pi / w0 ** 2) ** 2)
+        rr = zoffset * (1 + (sc.pi * w0 ** 2 / wavelength / zoffset) ** 2)
+        self.q = 1 / (1 / rr - 1j * wavelength / sc.pi / self.w ** 2)
+        self.z = zoffset.copy()
+
+        if self._verbose:
+            print(self.__str__())
+
+    def __str__(self):
+
+        return 'Beam: {0}\n'.format(self.comment)
+
+
 def _horn(slen, arad, hf, wlen):
     """
     Calculate the beam parameters for a given horn.
@@ -888,7 +964,6 @@ def _horn(slen, arad, hf, wlen):
         zoff_arr = np.zeros_like(wlen)
 
         for i in range(npts):
-
             qap_arr[i], w_arr[i], zoff_arr[i] = _horn(slen, arad, hf, wlen[i])
 
         return qap_arr, w_arr, zoff_arr
