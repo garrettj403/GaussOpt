@@ -3,9 +3,33 @@
 """
 
 
+import pytest
 import numpy as np 
 
 import gaussopt
+
+
+def test_frequency():
+
+    # 1: 250 GHz to 350 GHz, in 10 GHz increments
+    freq1 = gaussopt.Frequency(250, 350, 11, comment="#1")
+    np.testing.assert_array_equal(freq1.f, np.arange(250, 351, 10) * 1e9)
+
+    # 2: Same thing, but by specifying center/span
+    freq2 = gaussopt.Frequency(center=300, span=100, npts=11, comment="#2")
+    np.testing.assert_array_equal(freq2.f, np.arange(250, 351, 10) * 1e9)
+    assert freq1 == freq2
+
+    # 3: Single frequency point
+    freq3 = gaussopt.Frequency(single=250_000, units="MHz", comment="#3")
+    assert freq3.f[0] == 250e9
+    freq3.f = np.arange(250, 351, 10) * 1e9
+    assert freq3 == freq2
+    print(freq3)
+
+    # 4: Don't specify enough parameters...
+    with pytest.raises(ValueError):
+        gaussopt.Frequency(start=350, center=200, verbose=False)
 
 
 def test_gaussian_telescope():
@@ -131,4 +155,5 @@ def test_simple_focusing_elements():
 
 if __name__ == "__main__":
 
-    test_simple_focusing_elements()
+    test_frequency()
+    # test_simple_focusing_elements()

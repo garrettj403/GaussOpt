@@ -10,23 +10,21 @@ import gaussopt
 
 
 class Frequency(object):
-    """
-    Frequency sweep.
+    """ Frequency sweep.
     
     Attributes
     ----------
     f : float/ndarray
-        frequency array (in Hz)
+        frequency, in units [Hz]
     w : float/ndarray
-        wavelength array (in m)
+        wavelength, in units [m]
     idx_center : int
         index of center value
     
     """
 
     def __init__(self, start=None, stop=None, npts=None, freq=None, units='GHz', **kwargs):
-        """
-        Build frequency sweep.
+        """ Build frequency sweep.
         
         Keyword Arguments
         -----------------
@@ -40,8 +38,12 @@ class Frequency(object):
             span of frequency sweep
         npts : int
             number of points
+        freq : float
+            frequeny array
         units : str
             frequency units (e.g., 'GHz', 'MHz')
+        single : float
+            single frequency value
         verbose : bool
             print info to terminal?
         comment : str
@@ -69,10 +71,7 @@ class Frequency(object):
         if start is not None and stop is not None and npts is not None:
             self.f = np.linspace(start, stop, npts) * self.unit_mult
         elif freq is not None:
-            self.f = freq
-        else:
-            print("You must specify start+stop+npts or freq.")
-            raise ValueError
+            self.f = np.array(freq) * self.unit_mult
 
         if verbose:
             print(self.__str__())
