@@ -27,9 +27,9 @@ def test_frequency():
     assert freq3 == freq2
     print(freq3)
 
-    # # 4: Don't specify enough parameters...
-    # with pytest.raises(ValueError):
-    #     gaussopt.Frequency(start=350, center=200, verbose=False)
+    # 4: Don't specify enough parameters...
+    with pytest.raises(ValueError):
+        gaussopt.Frequency(start=350, center=200, verbose=False)
 
 
 def test_gaussian_telescope():

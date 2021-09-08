@@ -68,10 +68,15 @@ class Frequency(object):
             start = center - span / 2
             stop = center + span / 2
         
+        self._f = None
+
         if start is not None and stop is not None and npts is not None:
             self.f = np.linspace(start, stop, npts) * self.unit_mult
         elif freq is not None:
             self.f = np.array(freq) * self.unit_mult
+        else:
+            print("Must specify start+stop+npts, center+span+npts or single")
+            raise ValueError
 
         if verbose:
             print(self.__str__())
@@ -80,7 +85,7 @@ class Frequency(object):
 
         start = self.f[0] / self.unit_mult
         stop = self.f[-1] / self.unit_mult
-        npts = np.alen(self.f)
+        npts = len(self.f)
         if self.comment is None:
             s = "Frequency sweep:\n\tf = {0:.1f} to {1:.1f} {2}, {3} pts\n"
             s = s.format(start, stop, self.units, npts)
@@ -96,7 +101,7 @@ class Frequency(object):
 
     def __len__(self):
         
-        return np.alen(self.f)
+        return len(self.f)
 
     def __eq__(self, other):
 
