@@ -15,7 +15,7 @@ setup(
         'numpy',
         'scipy'
     ],
-    long_description=open('misc/README').read(),
+    long_description=open('README.md').read(),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Science/Research",
