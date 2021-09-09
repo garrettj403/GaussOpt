@@ -1,6 +1,4 @@
-""" Frequency sweep.
-
-"""
+"""Frequency sweep."""
 
 
 import numpy as np
@@ -10,7 +8,7 @@ import gaussopt
 
 
 class Frequency(object):
-    """ Frequency sweep.
+    """Frequency object.
     
     Attributes
     ----------
@@ -24,7 +22,7 @@ class Frequency(object):
     """
 
     def __init__(self, start=None, stop=None, npts=None, freq=None, units='GHz', **kwargs):
-        """ Build frequency sweep.
+        """Build frequency object.
         
         Keyword Arguments
         -----------------
@@ -39,7 +37,7 @@ class Frequency(object):
         npts : int
             number of points
         freq : float
-            frequeny array
+            frequency array
         units : str
             frequency units (e.g., 'GHz', 'MHz')
         single : float
@@ -56,7 +54,7 @@ class Frequency(object):
         single = kwargs.pop('single', None)
         verbose = kwargs.pop('verbose', True)
 
-        self.comment = kwargs.pop('comment', None)
+        self.comment = kwargs.pop('comment', "")
         self.units = units
         self.unit_mult = gaussopt.util.set_f_units(units)
 
@@ -83,15 +81,18 @@ class Frequency(object):
 
     def __str__(self):
 
-        start = self.f[0] / self.unit_mult
-        stop = self.f[-1] / self.unit_mult
         npts = len(self.f)
-        if self.comment is None:
-            s = "Frequency sweep:\n\tf = {0:.1f} to {1:.1f} {2}, {3} pts\n"
-            s = s.format(start, stop, self.units, npts)
+        start = self.f[0] / self.unit_mult
+        if npts != 1:
+            stop = self.f[-1] / self.unit_mult
+            step = (self.f[1] - self.f[0]) / self.unit_mult
+
+        if npts == 1:
+            s = "Frequency:\n\tf = {0:.1f} {1}\n "
+            s = s.format(start, self.units)
         else:
-            s = "Frequency sweep: {0}\n\tf = {1:.1f} to {2:.1f} {3}, {4} pts\n"
-            s = s.format(self.comment, start, stop, self.units, npts)
+            s = "Frequency sweep: {0}\n\tf = {1:.1f} to {2:.1f} {3}, step {4:.1f} {5}, {6} pts\n"
+            s = s.format(self.comment, start, stop, self.units, step, self.units, npts)
 
         return s
 
@@ -124,8 +125,7 @@ class Frequency(object):
             self.idx_center = None
     
     def idx(self, freq, units='GHz'):
-        """
-        Get index of value closest to specified frequency.
+        """Get index of value closest to specified frequency.
         
         Parameters
         ----------
