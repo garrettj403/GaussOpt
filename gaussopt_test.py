@@ -10,6 +10,7 @@ import gaussopt
 
 
 def test_frequency():
+    """Try different ways of specifying the frequency."""
 
     # 1: 250 GHz to 350 GHz, in 10 GHz increments
     freq1 = gaussopt.Frequency(250, 350, 11, comment="#1")
@@ -32,9 +33,28 @@ def test_frequency():
         gaussopt.Frequency(start=350, center=200, verbose=False)
 
 
+def test_component():
+    """Try different ways of specifying optical components."""
+
+    # 1: free space
+    freespace1 = gaussopt.FreeSpace(10, units="mm")
+    freespace2 = gaussopt.FreeSpace(0.01, units="m")
+    freespace3 = gaussopt.Dielectric(10, 1, units="mm")
+    freespace4 = gaussopt.Dielectric(10, 2, units="mm")
+    assert freespace1 == freespace2
+    assert freespace1 == freespace3
+    with pytest.raises(AssertionError):
+        assert freespace1 == freespace4
+
+    # 2: mirror vs thin lens
+    mirror = gaussopt.Mirror(10, units='cm')
+    lens = gaussopt.ThinLens(10, units='cm')
+    assert mirror == lens
+
+
 def test_gaussian_telescope():
-    """ A Gaussian telescope is generated in this test. Ensure that perfect
-    coupling is found. The focal length of all mirrors = 160mm. """
+    """Build a Gaussian telescope. Ensure that perfect coupling is found. The
+    focal length of all mirrors=160mm."""
 
     # Frequency sweep
     freq = gaussopt.Frequency(center=250, span=100, npts=101)
@@ -48,10 +68,11 @@ def test_gaussian_telescope():
     horn_rx = horn_tx.copy(comment='Receiving')
 
     # Optical components
-    air = gaussopt.Freespace(160)
+    air = gaussopt.FreeSpace(160)
     mirror = gaussopt.Mirror(16, units='cm')
+    lens = gaussopt.ThinLens(16, units='cm')
     z_offset = horn_tx.z_offset(units='mm')[idx_center]
-    air_red = gaussopt.Freespace(160 - z_offset, comment='reduced')
+    air_red = gaussopt.FreeSpace(160 - z_offset, comment='reduced')
 
     # Build system
     component_list = (air_red, mirror, air, air, mirror, air_red)
@@ -80,7 +101,7 @@ def test_dielectric():
     diel = gaussopt.Dielectric(distance, index_of_refraction)
 
     # Freespace
-    air = gaussopt.Freespace(distance)
+    air = gaussopt.FreeSpace(distance)
 
     assert air.matrix[0, 1] * index_of_refraction == diel.matrix[0, 1]
     assert air.matrix[0, 0] == diel.matrix[0, 0]
@@ -93,14 +114,14 @@ def test_simple_focusing_elements():
     # Focal length = 160 mm
     f = 160
 
-    comp1 = gaussopt.component.Mirror(f, verbose=False)
-    comp2 = gaussopt.component.ThinLens(f, verbose=False)
-    comp3 = gaussopt.component.SphericalMirror(2 * f, verbose=False)
-    comp4 = gaussopt.component.EllipsoidalMirror(f * 2, f * 2, verbose=False)
+    comp1 = gaussopt.component.Mirror(f, units="mm", verbose=False)
+    comp2 = gaussopt.component.ThinLens(f, units="mm", verbose=False)
+    comp3 = gaussopt.component.SphericalMirror(2 * f, units="mm", verbose=False)
+    comp4 = gaussopt.component.EllipsoidalMirror(f * 2, f * 2, units="mm", verbose=False)
 
-    np.testing.assert_array_equal(comp1.matrix, comp2.matrix)
-    np.testing.assert_array_equal(comp1.matrix, comp3.matrix)
-    np.testing.assert_array_equal(comp1.matrix, comp4.matrix)
+    assert comp1 == comp2
+    assert comp1 == comp3
+    assert comp1 == comp4
 
 
 # def test_edge_taper():
@@ -156,4 +177,6 @@ def test_simple_focusing_elements():
 if __name__ == "__main__":
 
     test_frequency()
+    # test_component()
+    # test_gaussian_telescope()
     # test_simple_focusing_elements()
