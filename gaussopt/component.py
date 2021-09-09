@@ -1,6 +1,4 @@
-""" Optical components.
-
-"""
+"""Optical components."""
 
 
 from copy import deepcopy as copy
@@ -16,8 +14,7 @@ from gaussopt.system import transform_beam
 # Optical component base-class ------------------------------------------------
 
 class Component(object):
-    """
-    Base-class for a general optical component.
+    """Base-class for a general optical component.
     
     To get initialization information, see :func:`__init__`.
     
@@ -33,8 +30,7 @@ class Component(object):
     """
 
     def __init__(self, matrix=None, **kwargs):
-        """
-        Construct component.
+        """Construct component.
         
         Parameters
         ----------
@@ -46,9 +42,9 @@ class Component(object):
         comment : str
             comment used to describe the component
         units : str
-            units for length (default is mm)
+            units for length, default is mm
         radius : float
-            radius of aperture used to analyze edge taper
+            radius of aperture, used to analyze edge taper
         verbose : bool
             print info to terminal?
             
@@ -77,15 +73,14 @@ class Component(object):
 
     def __str__(self):
 
-        return 'New Component: {0}\n{1}\n'.format(self.comment, self.matrix)
+        return 'Optical component: {0}\n{1}\n'.format(self.comment, self.matrix)
 
     def __repr__(self):
 
         return self.__str__()
 
     def __mul__(self, next_comp):
-        """
-        Cascade two optical components (using the multiplication symbol).
+        """Cascade two optical components (using the multiplication symbol).
         
         Parameters
         ----------
@@ -105,9 +100,12 @@ class Component(object):
 
         return new_comp
 
+    def __eq__(self, other):
+
+        return np.array_equal(self.matrix, other.matrix)
+
     def copy(self, **kwargs):
-        """
-        Copy component to new instance.
+        """Copy component to new instance.
         
         Keyword Arguments
         -----------------
@@ -134,9 +132,8 @@ class Component(object):
 
 # Propagation classes ---------------------------------------------------------
 
-class Freespace(Component):
-    """
-    Freespace propagation.
+class FreeSpace(Component):
+    """Free space propagation.
     
     To get initialization information, see :func:`__init__`.
     
@@ -147,25 +144,24 @@ class Freespace(Component):
     comment : str
         comment to describe component
     d : float
-        freespace propagation distance
+        free space propagation distance, in units [m]
         
     """
 
     def __init__(self, distance, **kwargs):
-        """
-        Build freespace propagation component.
+        """Build free space propagation component.
         
         Parameters
         ----------
         distance : float
-            freespace propagation distance
+            free space propagation distance, in specified units, default is mm
         
         Keyword Arguments
         -----------------
         comment : str
             comment to describe the component
         units : str
-            units for length (default is mm)
+            units for length, default is mm
         verbose : bool
             print info to terminal?
             
@@ -177,7 +173,7 @@ class Freespace(Component):
         # Private attributes
         self.type = 'prop'
 
-        # Freespace propagation distance
+        # Free space propagation distance
         self.d = distance * self._mult
 
         # Build beam transformation matrix
@@ -188,7 +184,7 @@ class Freespace(Component):
 
     def __str__(self):
 
-        msg = "Freespace: {0}\n\td = {1:.1f} {2}\n"
+        msg = "Free space: {0}\n\td = {1:.1f} {2}\n"
         d_print = self.d / self._mult
         msg = msg.format(self.comment, d_print, self._units)
         
@@ -196,8 +192,7 @@ class Freespace(Component):
 
 
 class Dielectric(Component):
-    """
-    Propagation through a dielectric material.
+    """Propagation through a dielectric material.
     
     To get initialization information, see :func:`__init__`.
     
@@ -208,20 +203,19 @@ class Dielectric(Component):
     comment : str
         comment to describe component
     d : float
-        thickness of dielectric slab
+        thickness of dielectric slab, in units [m]
     n : float, optional
         index of refraction
             
     """
 
     def __init__(self, thickness, n, **kwargs):
-        """
-        Build dielectric propagation component.
+        """Build dielectric propagation component.
         
         Parameters
         ----------
         thickness : float
-            thickness of dielectric slab
+            thickness of dielectric slab, in specified units, default is mm
         n : float
             index of refraction
         
@@ -230,7 +224,7 @@ class Dielectric(Component):
         comment : str
             comment to describe the component
         units : str
-            units for length (default is mm)
+            units for length, default is mm
         verbose : bool
             print info to terminal?
         
@@ -266,8 +260,7 @@ class Dielectric(Component):
 # Transformation classes ------------------------------------------------------
 
 class Mirror(Component):
-    """
-    Reflection off of a parabolic mirror.
+    """Reflection off of a parabolic mirror.
     
     To get initialization information, see :func:`__init__`.
     
@@ -283,22 +276,21 @@ class Mirror(Component):
     """
 
     def __init__(self, focal_length, **kwargs):
-        """
-        Build parabolic mirror component.
+        """Build parabolic mirror component.
         
         Parameters
         ----------
         focal_length : float
-            mirror focal length
+            mirror focal length, in specified units, default is mm
         
         Keyword Arguments
         -----------------
         comment : str
             comment to describe the component
         units : str
-            units for length (default is mm)
+            units for length, default is mm
         radius : float
-            radius of aperture (used to analyze edge taper)
+            radius of aperture, used to analyze edge taper
         verbose : bool
             print info to terminal?
         
@@ -328,9 +320,8 @@ class Mirror(Component):
         return msg
 
 
-class ThinLens(Component):
-    """
-    Transmission through a thin lens.
+class ThinLens(Mirror):
+    """Transmission through a thin lens.
 
     "Thin" meaning that the transmission through the dielectric material is 
     not included in the model. 
@@ -348,43 +339,6 @@ class ThinLens(Component):
         
     """
 
-    def __init__(self, focal_length, **kwargs):
-        """
-        Build thin lens component.
-        
-        Parameters
-        ----------
-        focal_length : float
-            thin lens focal length
-        
-        Keyword Arguments
-        -----------------
-        comment : str
-            comment to describe the component
-        units : str
-            units for length (default is mm)
-        radius : float
-            radius of aperture (used to analyze edge taper)
-        verbose : bool
-            print info to terminal?
-        
-        """
-
-        # Initialize component
-        Component.__init__(self, **kwargs)
-
-        # Private attributes
-        self.type = 'obj'
-        
-        # Focal length of thin len
-        self.f = focal_length * self._mult
-
-        # Build beam transformation matrix
-        self.matrix = np.array([[1., 0.], [-1. / self.f, 1.]])
-
-        if self._verbose:
-            print(self.__str__())
-
     def __str__(self):
 
         msg = "Thin lens: {0}\n\tf = {1:.1f} {2}\n"
@@ -395,8 +349,7 @@ class ThinLens(Component):
 
 
 class SphericalMirror(Component):
-    """
-    Reflection off of a spherical mirror
+    """Reflection off of a spherical mirror.
     
     To get initialization information, see :func:`__init__`.
     
@@ -416,22 +369,21 @@ class SphericalMirror(Component):
     """
 
     def __init__(self, radius_curv, **kwargs):
-        """
-        Build spherical mirror component.
+        """Build spherical mirror component.
         
         Parameters
         ----------
         radius_curv : float
-            radius of curvature, in units [m]
+            radius of curvature, in specified units, default is mm
         
         Keyword Arguments
         -----------------
         comment : str
             comment to describe the component
         units : str
-            units for length (default is mm)
+            units for length, default is mm
         radius : float
-            radius of aperture (used to analyze edge taper)
+            radius of aperture, used to analyze edge taper
         verbose : bool
             print info to terminal?
         
@@ -463,8 +415,7 @@ class SphericalMirror(Component):
 
 
 class EllipsoidalMirror(Component):
-    """
-    Reflection off of an ellipsoidal mirror
+    """Reflection off of an ellipsoidal mirror
     
     To get initialization information, see :func:`__init__`.
     
@@ -475,33 +426,32 @@ class EllipsoidalMirror(Component):
     f : float
         focal length of the mirror, in units [m]
     d1 : float
-        dimension d1
+        dimension d1, in units [m]
     d2 : float
-        dimension d2
+        dimension d2, in units [m]
     comment : str
         comment to describe the mirror
         
     """
 
     def __init__(self, d1, d2, **kwargs):
-        """
-        Build ellipsoidal mirror component.
+        """Build ellipsoidal mirror component.
         
         Parameters
         ----------
         d1 : float
-            dimension d1, in units [m]
+            dimension d1, in specified units, default is mm
         d2 : float
-            dimension d2, in units [m]
+            dimension d2, in specified units, default is mm
         
         Keyword Arguments
         -----------------
         comment : str
             comment to describe the component
         units : str
-            units for length (default is mm)
+            units for length, default is mm
         radius : float
-            radius of aperture (used to analyze edge taper)
+            radius of aperture, used to analyze edge taper
         verbose : bool
             print info to terminal?
         
@@ -534,8 +484,7 @@ class EllipsoidalMirror(Component):
 
 
 class Window(Component):
-    """
-    Window and/or aperture.
+    """Window and/or aperture.
     
     To get initialization information, see :func:`__init__`.
     
@@ -546,22 +495,21 @@ class Window(Component):
     comment : str
         comment to describe component
     radius : float
-        aperture radius of window
+        aperture radius of window, in units [m]
         
     """
 
     def __init__(self, **kwargs):
-        """
-        Window constructor.
+        """Window constructor.
         
         Keyword Arguments
         -----------------
         comment : str
             comment to describe the component
         units : str
-            units for length (default is mm)
+            units for length, default is mm
         radius : float
-            radius of aperture (used to analyze edge taper)
+            radius of aperture, used to analyze edge taper
         verbose : bool
             print info to terminal?
         
@@ -584,87 +532,86 @@ class Window(Component):
         return msg
 
 
-class ThickLens(Component):
-    """
-    Transmission through a thick lens.
-
-    "Thick" meaning that the transmission through the dielectric material is 
-    included in the model. 
-    
-    To get initialization information, see :func:`__init__`.
-    
-    Attributes
-    ----------
-    matrix : ndarray
-        beam transformation matrix, 2x2
-    f : float
-        focal length of the thick lens, in units [m]
-    comment : str
-        comment to describe the thick lens
-        
-    """
-
-    def __init__(self, n1, n2, d, r1, r2, **kwargs):
-        """
-        Build thick lens component.
-        
-        Parameters
-        ----------
-        n1 : float
-            refractive index #1
-        n2 : float
-            refractive index #2 (i.e., the lens material)
-        d : float
-            thickness of the lens, in units [m]
-        r1 : float
-            radius of curvature of surface #1, in units [m]
-        r1 : float
-            radius of curvature of surface #2, in units [m]
-        
-        Keyword Arguments
-        -----------------
-        comment : str
-            comment to describe the component
-        units : str
-            units for length (default is mm)
-        radius : float
-            radius of aperture (used to analyze edge taper)
-        verbose : bool
-            print info to terminal?
-        
-        """
-
-        # Initialize component
-        Component.__init__(self, **kwargs)
-
-        # Private attributes
-        self.type = 'obj'
-        
-        # Focal length of thick len
-        tmp = (n2 - n1) / n1 * (1 / r2 - 1 / r1)
-        self.f = 1 / tmp
-
-        # Build beam transformation matrix
-        self.matrix = np.array([[A, B], [C, D]])
-
-        if self._verbose:
-            print(self.__str__())
-
-    def __str__(self):
-
-        msg1 = "Thick lens: {0}\n\tf = {1:.1f} {2}\n"
-        msg1 = "            {0}\n\td = {1:.1f} {2}\n"
-        f_red = self.f / self._mult
-        msg = msg.format(self.comment, f_red, self._units)
-        
-        return msg
+# class ThickLens(Component):
+#     """
+#     Transmission through a thick lens.
+#
+#     "Thick" meaning that the transmission through the dielectric material is
+#     included in the model.
+#
+#     To get initialization information, see :func:`__init__`.
+#
+#     Attributes
+#     ----------
+#     matrix : ndarray
+#         beam transformation matrix, 2x2
+#     f : float
+#         focal length of the thick lens, in units [m]
+#     comment : str
+#         comment to describe the thick lens
+#
+#     """
+#
+#     def __init__(self, n1, n2, d, r1, r2, **kwargs):
+#         """
+#         Build thick lens component.
+#
+#         Parameters
+#         ----------
+#         n1 : float
+#             refractive index #1
+#         n2 : float
+#             refractive index #2 (i.e., the lens material)
+#         d : float
+#             thickness of the lens, in units [m]
+#         r1 : float
+#             radius of curvature of surface #1, in units [m]
+#         r1 : float
+#             radius of curvature of surface #2, in units [m]
+#
+#         Keyword Arguments
+#         -----------------
+#         comment : str
+#             comment to describe the component
+#         units : str
+#             units for length, default is mm
+#         radius : float
+#             radius of aperture, used to analyze edge taper
+#         verbose : bool
+#             print info to terminal?
+#
+#         """
+#
+#         # Initialize component
+#         Component.__init__(self, **kwargs)
+#
+#         # Private attributes
+#         self.type = 'obj'
+#
+#         # Focal length of thick len
+#         tmp = (n2 - n1) / n1 * (1 / r2 - 1 / r1)
+#         self.f = 1 / tmp
+#
+#         # Build beam transformation matrix
+#         self.matrix = np.array([[A, B], [C, D]])
+#
+#         if self._verbose:
+#             print(self.__str__())
+#
+#     def __str__(self):
+#
+#         msg1 = "Thick lens: {0}\n\tf = {1:.1f} {2}\n"
+#         msg1 = "            {0}\n\td = {1:.1f} {2}\n"
+#         f_red = self.f / self._mult
+#         msg = msg.format(self.comment, f_red, self._units)
+#
+#         return msg
 
 
 # Horn ------------------------------------------------------------------------
 
 class Horn(object):
-    """
-    Waveguide horn antenna.
+    """Waveguide horn antenna.
     
     To get initialization information, see :func:`__init__`.
     
@@ -692,8 +639,7 @@ class Horn(object):
     """
 
     def __init__(self, freq, slen, arad, hf, **kwargs):
-        """
-        Horn constructor.
+        """Horn constructor.
         
         Parameters
         ----------
@@ -711,7 +657,7 @@ class Horn(object):
         comment : str
             comment to describe the component
         units : str
-            units for length (default is mm)
+            units for length, default is mm
         verbose : bool
             print info to terminal?
 
@@ -757,8 +703,7 @@ class Horn(object):
         return self.__str__()
 
     def z_offset(self, units='mm'):
-        """
-        Calculate distance between horn aperture and beam waist (i.e., the 
+        """Calculate distance between horn aperture and beam waist (i.e., the
         z-offset).
         
         Keyword Arguments
@@ -779,8 +724,7 @@ class Horn(object):
         return self.z / mult
 
     def waist(self, units='mm'):
-        """
-        Calculate beam waist at aperture.
+        """Calculate beam waist at aperture.
         
         Keyword Arguments
         -----------------
@@ -800,8 +744,7 @@ class Horn(object):
         return self.w / mult
 
     def copy(self, **kwargs):
-        """
-        Copy horn to new instance.
+        """Copy horn to new instance.
         
         Keyword Arguments
         -----------------
@@ -826,10 +769,7 @@ class Horn(object):
         return new_comp
 
     def plot_properties(self):
-        """
-        Plot beam waist and z-offset over frequency range.
-
-        """
+        """Plot beam waist and z-offset over frequency range."""
 
         freq = self.freq.f
 
@@ -844,8 +784,7 @@ class Horn(object):
 
 
 class Beam(Horn):
-    """
-    Waveguide horn antenna.
+    """Waveguide horn antenna.
     
     To get initialization information, see :func:`__init__`.
     
@@ -873,8 +812,7 @@ class Beam(Horn):
     """
 
     def __init__(self, freq, w0, zoffset, **kwargs):
-        """
-        Horn constructor.
+        """Horn constructor.
         
         Parameters
         ----------
@@ -886,7 +824,7 @@ class Beam(Horn):
         comment : str
             comment to describe the component
         units : str
-            units for length (default is mm)
+            units for length, default is mm
         verbose : bool
             print info to terminal?
 
@@ -920,8 +858,7 @@ class Beam(Horn):
 
 
 def _horn(slen, arad, hf, wlen):
-    """
-    Calculate the beam parameters for a given horn.
+    """Calculate the beam parameters for a given horn.
     
     Parameters
     ----------
@@ -950,7 +887,7 @@ def _horn(slen, arad, hf, wlen):
         zoff = slen / (1 + (wlen * slen / (np.pi * (hf * arad) ** 2)) ** 2)
         q_waist = _q_from_waist(w, wlen)
 
-        waist_to_ap = Freespace(zoff, units='m', verbose=False).matrix
+        waist_to_ap = FreeSpace(zoff, units='m', verbose=False).matrix
         qap = transform_beam(waist_to_ap, q_waist)
 
         return qap, w, zoff
@@ -970,8 +907,7 @@ def _horn(slen, arad, hf, wlen):
 
 
 def _q_from_waist(waist, wlen):
-    """
-    Get the beam parameter (q) from the waist.
+    """Get the beam parameter (q) from the waist.
     
     Notes
     -----
