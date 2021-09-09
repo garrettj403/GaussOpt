@@ -1,6 +1,4 @@
-"""General utilities.
-
-"""
+"""General utilities."""
 
 
 import scipy.constants as sc
@@ -8,9 +6,8 @@ import scipy.constants as sc
 
 # Useful equations -----------------------------------------------------------
 
-def get_beam_radius(z, w0, wavel):
-    """
-    Get beam radius (w).
+def get_beam_radius(z, w0, wavelength):
+    """Get beam radius (w).
 
     Requires distance (z) and beam waist (w0).
 
@@ -24,7 +21,7 @@ def get_beam_radius(z, w0, wavel):
         distance from beam waist
     w0 : float
         beam waist
-    wavel : float
+    wavelength : float
         wavelength
 
     Returns
@@ -35,12 +32,11 @@ def get_beam_radius(z, w0, wavel):
 
     """
 
-    return w0 * (1 + ((wavel * z) / (sc.pi * w0**2))**2)**0.5
+    return w0 * (1 + ((wavelength * z) / (sc.pi * w0 ** 2)) ** 2) ** 0.5
 
 
-def get_radius_of_curvature(z, w0, wavel):
-    """
-    Get radius of curvature (R) at a given distance (z).
+def get_radius_of_curvature(z, w0, wavelength):
+    """Get radius of curvature (R) at a given distance (z).
 
     Requires distance (z) and beamwaist (w0).
 
@@ -54,7 +50,7 @@ def get_radius_of_curvature(z, w0, wavel):
         distance from beam waist
     w0 : float
         beam waist
-    wavel : float
+    wavelength : float
         wavelength
 
     Returns
@@ -64,12 +60,11 @@ def get_radius_of_curvature(z, w0, wavel):
 
     """
 
-    return z * (1 + ((sc.pi * w0**2) / (wavel * z))**2)
+    return z * (1 + ((sc.pi * w0**2) / (wavelength * z)) ** 2)
 
 
-def get_confocal_distance(w0, wavel):
-    """
-    Get confocal distance (z_c).
+def get_confocal_distance(w0, wavelength):
+    """Get confocal distance (z_c).
 
     Requires beam waist and wavelength.
 
@@ -83,7 +78,7 @@ def get_confocal_distance(w0, wavel):
     ----------
     w0 : float
         beam waist
-    wavel : float
+    wavelength : float
         wavelength
 
     Returns
@@ -93,12 +88,11 @@ def get_confocal_distance(w0, wavel):
 
     """
 
-    return sc.pi * w0**2 / wavel
+    return sc.pi * w0 ** 2 / wavelength
 
 
-def get_far_field_angle(w0, wavel):
-    """
-    Get far-field divergence angle (theta_0).
+def get_far_field_angle(w0, wavelength):
+    """Get far-field divergence angle (theta_0).
 
     Requires beam waist and wavelength.
 
@@ -110,7 +104,7 @@ def get_far_field_angle(w0, wavel):
     ----------
     w0 : float
         beam waist
-    wavel : float
+    wavelength : float
         wavelength
 
     Returns
@@ -121,12 +115,11 @@ def get_far_field_angle(w0, wavel):
 
     """
 
-    return wavel / sc.pi / w0
+    return wavelength / sc.pi / w0
 
 
-def get_fwhm(w0, wavel):
-    """
-    Get full width of half-maximum angle (theta_FWHM).
+def get_fwhm(w0, wavelength):
+    """Get full width of half-maximum angle (theta_FWHM).
 
     Requires beam waist and wavelength.
 
@@ -138,7 +131,7 @@ def get_fwhm(w0, wavel):
     ----------
     w0 : float
         beam waist
-    wavel : float
+    wavelength : float
         wavelength
 
     Returns
@@ -148,14 +141,13 @@ def get_fwhm(w0, wavel):
 
     """
 
-    return 1.18 * get_far_field_angle(w0, wavel)
+    return 1.18 * get_far_field_angle(w0, wavelength)
 
 
 # Set units ------------------------------------------------------------------
 
 def set_d_units(units):
-    """
-    Read distance units.
+    """Read distance units.
 
     Parameters
     ----------
@@ -179,16 +171,15 @@ def set_d_units(units):
     }
 
     try:
-        mult = unit_dict[units.lower()]
-    except:
+        multiplier = unit_dict[units.lower()]
+    except KeyError:
         raise ValueError("Distance units not recognized.")
 
-    return mult
+    return multiplier
 
 
 def set_f_units(units):
-    """
-    Read frequency units.
+    """Read frequency units.
 
     Parameters
     ----------
@@ -211,8 +202,8 @@ def set_f_units(units):
     }
 
     try:
-        mult = unit_dict[units.lower()]
-    except:
+        multiplier = unit_dict[units.lower()]
+    except KeyError:
         raise ValueError("Frequency units not recognized.")
 
-    return mult
+    return multiplier
