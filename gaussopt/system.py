@@ -1,6 +1,4 @@
-""" Optical system.
-
-"""
+""" Optical system."""
 
 
 import matplotlib.pyplot as plt
@@ -10,8 +8,7 @@ import gaussopt
 
 
 class System(object):
-    """
-    Optical system.
+    """Optical system.
     
     Attributes
     ----------
@@ -29,8 +26,7 @@ class System(object):
     """
 
     def __init__(self, horn_tx, component_list, horn_rx=None, **kwargs):
-        """
-        Build optical system.
+        """Build optical system.
         
         Parameters
         ----------
@@ -61,7 +57,6 @@ class System(object):
 
         self._system = component_list[0]
         for comp in component_list[1:]:
-            # self._system *= comp 
             self._system = np.dot(comp, self._system)
         self.matrix = self._system.matrix
 
@@ -77,8 +72,7 @@ class System(object):
         return "System: {0}\n{1}\n".format(self.comment, self.matrix)
 
     def coupling(self):
-        """
-        Get coupling between the horns.
+        """Get coupling between the horns.
         
         Returns
         -------
@@ -123,8 +117,7 @@ class System(object):
         return distance, waist 
 
     def best_coupling_frequency(self):
-        """
-        Get best coupling frequency.
+        """Get best coupling frequency.
         
         Returns
         -------
@@ -138,8 +131,7 @@ class System(object):
         return self.freq.f[idx_best]
 
     def best_coupling(self):
-        """
-        Get best coupling.
+        """Get best coupling.
         
         Returns
         -------
@@ -151,8 +143,7 @@ class System(object):
         return self.coupling().max()
 
     def print_best_coupling(self, units='GHz'):
-        """
-        Print best coupling and frequency where it is found.
+        """Print best coupling and frequency where it is found.
         
         Parameters
         ----------
@@ -165,14 +156,11 @@ class System(object):
         best = self.best_coupling() * 100.
         f_best = self.best_coupling_frequency() / mult
 
-        s = "Best coupling: {0:.1f} % at {1:.1f} {2}"
+        s = "Best coupling: {0:.1f}% at {1:.1f} {2}"
         print(s.format(best, f_best, units))
 
     def plot_coupling(self, ax=None):
-        """
-        Plot coupling (in percentage) versus frequency.
-        
-        """
+        """Plot coupling (in percentage) versus frequency."""
 
         f = self.freq.f / self.freq.unit_mult
 
@@ -181,7 +169,7 @@ class System(object):
         ax.plot(f, self.coupling() * 100.)
         ax.set(xlim=[f.min(), f.max()])
         ax.set(xlabel='Frequency ({0})'.format(self.freq.units))
-        ax.set(ylabel='Coupling (\%)')
+        ax.set(ylabel='Coupling (%)')
         plt.autoscale(enable=True, axis='y', tight=True)
         plt.grid(True)
         plt.minorticks_on()
@@ -189,10 +177,7 @@ class System(object):
             plt.show()
 
     def plot_coupling_mag(self, ax=None):
-        """
-        Plot coupling versus frequency. 
-
-        """
+        """Plot coupling versus frequency."""
 
         f = self.freq.f / self.freq.unit_mult
 
@@ -206,10 +191,7 @@ class System(object):
             plt.show()
 
     def plot_coupling_db(self, ax=None):
-        """
-        Plot coupling (in dB) versus frequency.
-
-        """
+        """Plot coupling (in dB) versus frequency."""
 
         f = self.freq.f / self.freq.unit_mult
 
@@ -223,6 +205,7 @@ class System(object):
             plt.show()
 
     def plot_edge_taper_db(self, ax=None):
+        """Plot edge taper as a function of frequency."""
 
         f = self.freq.f / self.freq.unit_mult
 
@@ -246,6 +229,7 @@ class System(object):
             plt.show()
 
     def plot_waists(self, ax=None):
+        """Plot beam waist as a function of frequency."""
 
         f = self.freq.f / self.freq.unit_mult
 
@@ -267,6 +251,7 @@ class System(object):
             plt.show()
 
     def plot_aperture_30db(self, ax=None):
+        """Plot aperture required for 30dB edge taper."""
 
         f = self.freq.f / self.freq.unit_mult
 
@@ -289,6 +274,7 @@ class System(object):
             plt.show()
 
     def plot_system(self, freq=None, ax=None, figname=None):
+        """Plot beam propagation through the system."""
 
         # Frequency to plot waists for
         if freq is None:
@@ -342,22 +328,22 @@ class System(object):
 
                 ax.axvline(distance * 1e3, ls=':', lw=0.5, c='k')
 
-                ax.plot(distance * 1e3, comp.radius * 1e3, 'kx', lw=1, ms=3)
+                ax.plot(distance * 1e3, comp.radius * 1e3, 'kx')
                 label = "A.R.".format(comp.comment)
                 ax.text(distance * 1e3, comp.radius * 1e3 + 4, label,
                         rotation=90, ha='center', va='bottom',
                         multialignment='left',
                         bbox=dict(boxstyle='round', facecolor='wheat',
-                                  alpha=1),
-                        fontsize=8)
+                                  alpha=1), )
+                        # fontsize=8)
 
                 label = "{0}".format(comp.comment)
                 ax.text(distance * 1e3, w[idx] * 1e3 + 10, label,
                         rotation=90, ha='center', va='bottom',
                         multialignment='left',
                         bbox=dict(boxstyle='round', facecolor='wheat',
-                                  alpha=1),
-                        fontsize=8)
+                                  alpha=1), )
+                        # fontsize=8)
             distance += comp.d
 
         ax.set(ylim=[0, 100], ylabel='Size (mm)')
@@ -365,7 +351,7 @@ class System(object):
         ax.set(xlabel='Distance from Horn Aperture (mm)')
         ax.minorticks_on()
 
-        leg = ax.legend(loc=8, fontsize=8)
+        leg = ax.legend(loc=8)
         leg.get_frame().set_alpha(1.)
 
         if figname is not None:
@@ -376,8 +362,7 @@ class System(object):
 
 
 def transform_beam(sys_matrix, q_in):
-    """
-    Transform a beam using the beam transformation matrix.
+    """Transform a beam using the beam transformation matrix.
     
     Parameters
     ----------
@@ -402,7 +387,7 @@ def transform_beam(sys_matrix, q_in):
 # Helper functions -----------------------------------------------------------
 
 def _waist_from_q(q, wavelength):
-    """
+    """Calculate waist from q parameter.
     
     Parameters
     ----------
@@ -418,7 +403,7 @@ def _waist_from_q(q, wavelength):
 
 
 def _radius_from_q(q):
-    """
+    """Calculate beam radius from q parameter.
     
     Parameters
     ----------
@@ -433,7 +418,7 @@ def _radius_from_q(q):
 
 
 def _freespace_matrix(distance):
-    """
+    """Calculate 2x2 matrix for freespace.
     
     Parameters
     ----------
