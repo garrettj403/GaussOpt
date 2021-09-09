@@ -1,6 +1,4 @@
-""" Analyze quasi-optical systems using Gaussian beam analysis.
-
-"""
+"""Analyze quasi-optical systems using Gaussian beam analysis."""
 
 import gaussopt.component
 import gaussopt.frequency
